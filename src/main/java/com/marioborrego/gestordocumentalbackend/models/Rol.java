@@ -8,9 +8,9 @@ import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
+@Getter @Setter
 @Entity(name = "rol")
+@Builder
 public class Rol {
 
     @Id

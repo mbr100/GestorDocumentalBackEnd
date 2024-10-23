@@ -5,13 +5,14 @@ import com.marioborrego.gestordocumentalbackend.presentation.dto.rolDTO.EditarRo
 import com.marioborrego.gestordocumentalbackend.presentation.dto.rolDTO.RolDTO;
 
 import java.util.List;
+import java.util.Map;
 
 public interface RolService {
     List<RolDTO> obtenerTodosLosRolesConEmpleados();
     List<Rol> obtenerTodosLosRoles();
-    boolean eliminarRol(String Rol);
+    Map<String,String> eliminarRol(String Rol);
     boolean existeRol(String Rol);
     boolean rolTieneEmpleados(String Rol);
-    boolean actualizarRol(EditarRolDTO Rol);
-    boolean crearRol(String Rol);
+    Map<String, String> actualizarRol(EditarRolDTO Rol);
+    Map<String, String> crearRol(String Rol);
 }

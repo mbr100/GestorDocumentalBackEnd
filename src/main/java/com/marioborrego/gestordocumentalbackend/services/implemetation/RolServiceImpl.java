@@ -9,8 +9,11 @@ import com.marioborrego.gestordocumentalbackend.services.RolService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,19 +48,74 @@ public class RolServiceImpl implements RolService {
     }
 
     @Override
-    public boolean eliminarRol(String Rol) {
-        Rol rolEliminar = rolRepository.findByRol(Rol);
-        if (rolEliminar != null) {
-            try {
-                rolRepository.delete(rolEliminar);
-                return true;
-            } catch (Exception e) {
-                logger.error("Error al eliminar el rol {}", Rol);
-                logger.error(e.getMessage());
-                return false;
+    public Map<String,String> eliminarRol(String Rol) {
+        Map<String, String> response = new HashMap<>();
+        try {
+            Rol rolEliminar = rolRepository.findByRol(Rol);
+            if (rolEliminar == null) {
+                response.put("status", "error");
+                response.put("message", "El rol no existe");
+                return response;
             }
+            if (rolRepository.contarEmpleadosPorRol(Rol) > 0) {
+                response.put("status", "error");
+                response.put("message", "No se puede eliminar un rol con empleados asociados");
+                return response;
+            }
+            rolRepository.delete(rolEliminar);
+            response.put("status", "success");
+            response.put("message", "Rol eliminado correctamente");
+            return response;
+        } catch (Exception e) {
+            logger.error("Error al eliminar el rol {}", Rol);
+            logger.error(e.getMessage());
+            response.put("status", "error");
+            response.put("message", e.getMessage());
+            return response;
         }
-        return false;
+    }
+
+    @Override
+    @Transactional
+    public Map<String, String> actualizarRol(EditarRolDTO Rol) {
+        Map<String, String> response = new HashMap<>();
+        try {
+            if (rolRepository.findByRol(Rol.getAntiuguoRol()) == null) {
+                response.put("status", "error");
+                response.put("message", "No existe el rol a actualizar");
+                return response;
+            }
+            if (rolRepository.findByRol(Rol.getNuevoRol()) != null) {
+                response.put("status", "error");
+                response.put("message", "El nuevo rol ya existe");
+                return response;
+            }
+            rolRepository.actualizarRol(Rol.getAntiuguoRol(), Rol.getNuevoRol());
+            response.put("status", "success");
+            response.put("message", "Rol actualizado correctamente");
+            return response;
+        } catch (Exception e) {
+            logger.error("Error al actualizar el rol {}", Rol.getAntiuguoRol());
+            logger.error(e.getMessage());
+            response.put("status", "error");
+            response.put("message", e.getMessage());
+            return response;
+        }
+    }
+
+    @Override
+    public  Map<String, String> crearRol(String Rol) {
+        Map<String, String> response = new HashMap<>();
+        if (rolRepository.findByRol(Rol) != null) {
+            response.put("status", "error");
+            response.put("message", "El rol ya existe");
+        }
+        Rol nuevoRol = new Rol();
+        nuevoRol.setRol(Rol);
+        rolRepository.save(nuevoRol);
+        response.put("status", "success");
+        response.put("message", "Rol creado correctamente");
+        return response;
     }
 
     @Override
@@ -68,39 +126,5 @@ public class RolServiceImpl implements RolService {
     @Override
     public boolean rolTieneEmpleados(String Rol) {
         return rolRepository.contarEmpleadosPorRol(Rol) > 0;
-    }
-
-    @Override
-    public boolean actualizarRol(EditarRolDTO Rol) {
-        try {
-            Rol rolActualizar = rolRepository.findByRol(Rol.getAntiuguoRol());
-            if (rolActualizar == null) {
-                return false;
-            }
-            rolActualizar.setRol(Rol.getNuevoRol());
-            rolRepository.save(rolActualizar);
-            return true;
-        } catch (Exception e) {
-            logger.error("Error al actualizar el rol {}", Rol.getAntiuguoRol());
-            logger.error(e.getMessage());
-            return false;
-        }
-    }
-
-    @Override
-    public boolean crearRol(String Rol) {
-        if (rolRepository.findByRol(Rol) == null) {
-            try {
-                Rol nuevoRol = new Rol();
-                nuevoRol.setRol(Rol);
-                rolRepository.save(nuevoRol);
-                return true;
-            } catch (Exception e) {
-                logger.error("Error al crear el rol {}", Rol);
-                logger.error(e.getMessage());
-                return false;
-            }
-        }
-        return false;
     }
 }

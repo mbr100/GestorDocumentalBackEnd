@@ -75,31 +75,24 @@ public class RolController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Rol eliminado correctamente"),
             @ApiResponse(responseCode = "204", description = "No se encontró el rol a eliminar"),
+            @ApiResponse(responseCode = "400", description = "No se puede eliminar un rol con empleados asociados"),
             @ApiResponse(responseCode = "500", description = "Fallo al eliminar el rol")
     })
     @DeleteMapping("eliminarRol/{rol}")
     public ResponseEntity<Map<String,String>> eliminarRol(@PathVariable String rol) {
-        Map<String,String> mensaje = new HashMap<>();
-        //Comprobar si el rol existe
-        if (!rolService.existeRol(rol)) {
-            mensaje.put("message", "No existe Rol a eliminar");
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mensaje);
-        }
-        //Comprobar si el rol tiene empleados asignados
-        if (rolService.rolTieneEmpleados(rol)) {
-            mensaje.put("message", "El rol tiene empleados asignados");
-            logger.error("El rol {} tiene empleados asignados", rol);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mensaje);
-        }
         try {
-            boolean eliminado = rolService.eliminarRol(rol);
-            if (!eliminado) {
-                mensaje.put("message", "Error al eliminar el rol");
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mensaje);
+            Map<String,String> message = rolService.eliminarRol(rol);
+            HttpStatus status;
+            if (message.get("status").equals("error")) {
+                status = switch (message.get("message")) {
+                    case "El rol no existe" -> HttpStatus.NO_CONTENT;
+                    case "No se puede eliminar un rol con empleados asociados" -> HttpStatus.BAD_REQUEST;
+                    default -> HttpStatus.INTERNAL_SERVER_ERROR;
+                };
+            } else {
+                status = HttpStatus.OK;
             }
-            mensaje.put("message", "Rol eliminado correctamente");
-            mensaje.put("code", String.valueOf(HttpStatus.OK.value()));
-            return ResponseEntity.status(HttpStatus.OK).body(mensaje);
+            return ResponseEntity.status(status).body(message);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
@@ -113,30 +106,23 @@ public class RolController {
     })
     @PutMapping("editarRol")
     public ResponseEntity<Map<String, String>> actualizarRol(@RequestBody EditarRolDTO rol) {
-        logger.info("Editar rol {}", rol.antiuguoRol);
-        Map<String,String> mensaje = new HashMap<>();
-        if (!rolService.existeRol(rol.antiuguoRol)) {
-            mensaje.put("message", "No existe Rol a actualizar");
-            logger.error("respuesta: {}", mensaje);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mensaje);
-        }
-        if (rolService.existeRol(rol.nuevoRol)) {
-            mensaje.put("message", "El rol ya existe");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mensaje);
-        }
+        Map<String,String> message = new HashMap<>();
+        HttpStatus status;
         try {
-            boolean actualizado = rolService.actualizarRol(rol);
-            if (!actualizado) {
-                mensaje.put("message", "Error al actualizar el rol");
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mensaje);
+            message = rolService.actualizarRol(rol);
+            if (message.get("status").equals("error")) {
+                status = switch (message.get("message")) {
+                    case "No existe el rol a actualizar", "El nuevo rol ya existe" -> HttpStatus.BAD_REQUEST;
+                    default -> HttpStatus.INTERNAL_SERVER_ERROR;
+                };
+            } else{
+                status = HttpStatus.OK;
             }
-            mensaje.put("message", "Rol actualizado correctamente");
-            mensaje.put("code", String.valueOf(HttpStatus.OK.value()));
-            return ResponseEntity.status(HttpStatus.OK).body(mensaje);
+            return ResponseEntity.status(status).body(message);
         } catch (Exception e) {
-            mensaje.put("message", "Error al actualizar el rol");
-            mensaje.put("error", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mensaje);
+            message.put("message", "Error al actualizar el rol");
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            return ResponseEntity.status(status).body(message);
         }
     }
 
@@ -149,23 +135,20 @@ public class RolController {
     @PostMapping("crearRol")
     public ResponseEntity<Map<String, String>> crearRol(@RequestBody RolesDTO rol) {
         Map<String,String> mensaje = new HashMap<>();
-        if (rolService.existeRol(rol.getRol())) {
-            mensaje.put("message", "El rol ya existe");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mensaje);
-        }
+        HttpStatus status;
         try {
-            boolean creado = rolService.crearRol(rol.getRol());
-            if (!creado) {
-                mensaje.put("message", "Error al crear el rol");
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mensaje);
+            mensaje = rolService.crearRol(rol.getRol());
+            if (mensaje.get("status").equals("error")) {
+                status = HttpStatus.BAD_REQUEST;
+            } else {
+                status = HttpStatus.CREATED;
             }
-            mensaje.put("message", "Rol creado correctamente");
-            mensaje.put("code", String.valueOf(HttpStatus.CREATED.value()));
-            return ResponseEntity.status(HttpStatus.CREATED).body(mensaje);
+            return ResponseEntity.status(status).body(mensaje);
         } catch (Exception e) {
+            mensaje.put("status", "error");
             mensaje.put("message", "Error al crear el rol");
-            mensaje.put("error", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mensaje);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            return ResponseEntity.status(status).body(mensaje);
         }
     }
 }

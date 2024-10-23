@@ -49,22 +49,22 @@ public class EmpleadosServiceImpl implements EmpleadoService {
         Empleado empleado = empleadoRepository.findById(id).orElse(null);
         if (empleado != null) {
             if (empleado.getRol().getRol().equals("admin")) {
-                response.put("mensaje", "No se puede eliminar un empleado con rol de administrador");
+                response.put("message", "No se puede eliminar un empleado con rol de administrador");
                 response.put("status", "error");
                 return response;
             }
             if (empleadoRepository.existsProyectosByEmpleadoId(id)) {
                 response.put("status", "error");
-                response.put("mensaje", "No se puede eliminar un empleado con proyectos asociados");
+                response.put("message", "No se puede eliminar un empleado con proyectos asociados");
                 return response;
             }
             try {
                 empleadoRepository.deleteById(id);
                 response.put("status", "success");
-                response.put("mensaje", "Empleado eliminado correctamente");
+                response.put("message", "Empleado eliminado correctamente");
             } catch (Exception e) {
                 response.put("status", "error");
-                response.put("mensaje", e.getMessage());
+                response.put("message", e.getMessage());
             }
         }
         return response;
@@ -112,15 +112,15 @@ public class EmpleadosServiceImpl implements EmpleadoService {
                 empleado.setRol(rolEmpleado);
                 empleadoRepository.save(empleado);
                 response.put("status", "success");
-                response.put("mensaje", "Empleado actualizado correctamente");
+                response.put("message", "Empleado actualizado correctamente");
             } else {
                 response.put("status", "error");
-                response.put("mensaje", "Empleado no encontrado");
+                response.put("message", "Empleado no encontrado");
             }
         } catch (Exception e) {
             log.error("Error al actualizar el empleado con id {}", id, e);
             response.put("status", "error");
-            response.put("mensaje", "Error al actualizar el empleado");
+            response.put("message", "Error al actualizar el empleado");
         }
         return response;
     }
