@@ -1,9 +1,9 @@
 package com.marioborrego.gestordocumentalbackend.services.implemetation;
 
 import com.marioborrego.gestordocumentalbackend.models.Rol;
-import com.marioborrego.gestordocumentalbackend.presentation.dto.EmpleadoDTO;
-import com.marioborrego.gestordocumentalbackend.presentation.dto.RolDTO.EditarRolDTO;
-import com.marioborrego.gestordocumentalbackend.presentation.dto.RolDTO.RolDTO;
+import com.marioborrego.gestordocumentalbackend.presentation.dto.empleadoDTO.ListarEmpleadoDTO;
+import com.marioborrego.gestordocumentalbackend.presentation.dto.rolDTO.EditarRolDTO;
+import com.marioborrego.gestordocumentalbackend.presentation.dto.rolDTO.RolDTO;
 import com.marioborrego.gestordocumentalbackend.repositories.RolRepository;
 import com.marioborrego.gestordocumentalbackend.services.RolService;
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ public class RolServiceImpl implements RolService {
         return roles.stream().map(rol -> new RolDTO(
                 rol.getRol(),
                 rol.getEmpleados().stream()
-                        .map(empleado -> new EmpleadoDTO(
+                        .map(empleado -> new ListarEmpleadoDTO(
                                 empleado.getIdEmpleado(),
                                 empleado.getNombre(),
                                 empleado.getEmail(),

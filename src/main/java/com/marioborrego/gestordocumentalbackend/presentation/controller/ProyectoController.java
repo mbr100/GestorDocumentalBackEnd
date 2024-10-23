@@ -1,6 +1,6 @@
 package com.marioborrego.gestordocumentalbackend.presentation.controller;
 
-import com.marioborrego.gestordocumentalbackend.presentation.dto.CrearProyectoDTO;
+import com.marioborrego.gestordocumentalbackend.presentation.dto.proyectoDTO.CrearProyectoDTO;
 import com.marioborrego.gestordocumentalbackend.services.ProyectoService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

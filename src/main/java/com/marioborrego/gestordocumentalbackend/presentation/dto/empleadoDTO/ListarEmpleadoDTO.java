@@ -1,6 +1,5 @@
-package com.marioborrego.gestordocumentalbackend.presentation.dto;
+package com.marioborrego.gestordocumentalbackend.presentation.dto.empleadoDTO;
 
-import com.marioborrego.gestordocumentalbackend.models.Rol;
 import lombok.*;
 
 import java.io.Serializable;
@@ -10,7 +9,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class EmpleadoDTO implements Serializable {
+public class ListarEmpleadoDTO implements Serializable {
     int idEmpleado;
     String nombre;
     String email;

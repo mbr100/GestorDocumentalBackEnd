@@ -1,4 +1,4 @@
-package com.marioborrego.gestordocumentalbackend.presentation.dto;
+package com.marioborrego.gestordocumentalbackend.presentation.dto.proyectoDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

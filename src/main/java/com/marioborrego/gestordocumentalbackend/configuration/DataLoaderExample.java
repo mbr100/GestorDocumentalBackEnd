@@ -57,10 +57,34 @@ public class DataLoaderExample {
                     .rol(comercial)
                     .build();
 
+            Empleado empleado4 = Empleado.builder()
+                    .nombre("Pepe")
+                    .email("pepe@ejemplo.com")
+                    .telefono("555666777")
+                    .rol(comercial)
+                    .build();
+
+            Empleado empleado5 = Empleado.builder()
+                    .nombre("ejemplo1")
+                    .email("ejemplo1@ejemplo.com")
+                    .telefono("555666777")
+                    .rol(comercial)
+                    .build();
+
+            Empleado empleado6 = Empleado.builder()
+                    .nombre("ejemplo2")
+                    .email("ejemplo2@ejemplo.com")
+                    .telefono("555666777")
+                    .rol(comercial)
+                    .build();
+
             // Guardar empleados en la base de datos
             empleadoRepository.save(empleado1);
             empleadoRepository.save(empleado2);
             empleadoRepository.save(empleado3);
+            empleadoRepository.save(empleado4);
+            empleadoRepository.save(empleado5);
+            empleadoRepository.save(empleado6);
 
             // Crear un proyecto de prueba
             Set<Empleado> empleadosProyecto = new HashSet<>();
@@ -68,16 +92,27 @@ public class DataLoaderExample {
             empleadosProyecto.add(empleado2);
             empleadosProyecto.add(empleado3);
 
+            Set<Empleado> empleadosProyecto2 = new HashSet<>();
+
             Proyectos proyecto1 = Proyectos.builder()
-                    .codigo("001.002.003")
+                    .codigo("000.000.001")
                     .titulo("Proyecto I+D")
                     .ano(2023)
                     .cliente("Cliente 1")
                     .empleados(empleadosProyecto)  // Asignar los empleados al proyecto
                     .build();
 
+            Proyectos proyecto2 = Proyectos.builder()
+                    .codigo("000.000.002")
+                    .titulo("Proyecto I+D+i")
+                    .ano(2023)
+                    .cliente("Cliente 2")
+                    .empleados(empleadosProyecto2)  // Asignar los empleados al proyecto
+                    .build();
+
             // Guardar el proyecto en la base de datos
             proyectosRepository.save(proyecto1);
+            proyectosRepository.save(proyecto2);
 
         };
 

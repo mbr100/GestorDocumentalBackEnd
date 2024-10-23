@@ -1,8 +1,8 @@
 package com.marioborrego.gestordocumentalbackend.services;
 
 import com.marioborrego.gestordocumentalbackend.models.Rol;
-import com.marioborrego.gestordocumentalbackend.presentation.dto.RolDTO.EditarRolDTO;
-import com.marioborrego.gestordocumentalbackend.presentation.dto.RolDTO.RolDTO;
+import com.marioborrego.gestordocumentalbackend.presentation.dto.rolDTO.EditarRolDTO;
+import com.marioborrego.gestordocumentalbackend.presentation.dto.rolDTO.RolDTO;
 
 import java.util.List;
 

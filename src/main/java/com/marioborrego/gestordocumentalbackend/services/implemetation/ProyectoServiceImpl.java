@@ -1,7 +1,7 @@
 package com.marioborrego.gestordocumentalbackend.services.implemetation;
 
 import com.marioborrego.gestordocumentalbackend.models.Proyectos;
-import com.marioborrego.gestordocumentalbackend.presentation.dto.CrearProyectoDTO;
+import com.marioborrego.gestordocumentalbackend.presentation.dto.proyectoDTO.CrearProyectoDTO;
 import com.marioborrego.gestordocumentalbackend.repositories.ProyectosRepository;
 import com.marioborrego.gestordocumentalbackend.services.ProyectoService;
 import org.springframework.stereotype.Service;

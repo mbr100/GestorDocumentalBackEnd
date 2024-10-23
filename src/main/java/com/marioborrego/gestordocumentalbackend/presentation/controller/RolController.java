@@ -1,9 +1,9 @@
 package com.marioborrego.gestordocumentalbackend.presentation.controller;
 
 import com.marioborrego.gestordocumentalbackend.models.Rol;
-import com.marioborrego.gestordocumentalbackend.presentation.dto.RolDTO.EditarRolDTO;
-import com.marioborrego.gestordocumentalbackend.presentation.dto.RolDTO.RolDTO;
-import com.marioborrego.gestordocumentalbackend.presentation.dto.RolDTO.RolesDTO;
+import com.marioborrego.gestordocumentalbackend.presentation.dto.rolDTO.EditarRolDTO;
+import com.marioborrego.gestordocumentalbackend.presentation.dto.rolDTO.RolDTO;
+import com.marioborrego.gestordocumentalbackend.presentation.dto.rolDTO.RolesDTO;
 import com.marioborrego.gestordocumentalbackend.services.RolService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
