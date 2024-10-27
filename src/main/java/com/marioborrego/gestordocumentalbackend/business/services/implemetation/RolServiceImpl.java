@@ -1,11 +1,11 @@
-package com.marioborrego.gestordocumentalbackend.services.implemetation;
+package com.marioborrego.gestordocumentalbackend.business.services.implemetation;
 
-import com.marioborrego.gestordocumentalbackend.models.Rol;
+import com.marioborrego.gestordocumentalbackend.domain.models.Rol;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.empleadoDTO.ListarEmpleadoDTO;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.rolDTO.EditarRolDTO;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.rolDTO.RolDTO;
-import com.marioborrego.gestordocumentalbackend.repositories.RolRepository;
-import com.marioborrego.gestordocumentalbackend.services.RolService;
+import com.marioborrego.gestordocumentalbackend.domain.repositories.RolRepository;
+import com.marioborrego.gestordocumentalbackend.business.services.interfaces.RolService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -119,12 +119,8 @@ public class RolServiceImpl implements RolService {
     }
 
     @Override
-    public boolean existeRol(String Rol) {
-        return rolRepository.findByRol(Rol) != null;
-    }
-
-    @Override
-    public boolean rolTieneEmpleados(String Rol) {
-        return rolRepository.contarEmpleadosPorRol(Rol) > 0;
+    public List<Rol> getAllRolesProyectos() {
+        List<Rol> roles = rolRepository.findAll();
+        return roles.stream().filter( rol -> !"administrador".equals(rol.getRol())).collect(Collectors.toList());
     }
 }

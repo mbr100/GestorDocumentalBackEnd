@@ -1,11 +1,12 @@
-package com.marioborrego.gestordocumentalbackend.services.implemetation;
+package com.marioborrego.gestordocumentalbackend.business.services.implemetation;
 
-import com.marioborrego.gestordocumentalbackend.models.Empleado;
-import com.marioborrego.gestordocumentalbackend.models.Rol;
-import com.marioborrego.gestordocumentalbackend.presentation.dto.empleadoDTO.CrearEmpleadoDTO;
+import com.marioborrego.gestordocumentalbackend.domain.models.Empleado;
+import com.marioborrego.gestordocumentalbackend.domain.models.Rol;
+import com.marioborrego.gestordocumentalbackend.domain.repositories.RolRepository;
+import com.marioborrego.gestordocumentalbackend.presentation.dto.empleadoDTO.EditarEmpleadoDTO;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.empleadoDTO.ListarEmpleadoDTO;
-import com.marioborrego.gestordocumentalbackend.repositories.EmpleadoRepository;
-import com.marioborrego.gestordocumentalbackend.services.EmpleadoService;
+import com.marioborrego.gestordocumentalbackend.domain.repositories.EmpleadoRepository;
+import com.marioborrego.gestordocumentalbackend.business.services.interfaces.EmpleadoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -16,17 +17,20 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class EmpleadosServiceImpl implements EmpleadoService {
-    private static final Logger log = LoggerFactory.getLogger(EmpleadosServiceImpl.class);
+public class EmpleadoServiceImpl implements EmpleadoService {
+    private static final Logger log = LoggerFactory.getLogger(EmpleadoServiceImpl.class);
     private final EmpleadoRepository empleadoRepository;
+    private final RolRepository rolRepository;
 
-    public EmpleadosServiceImpl(EmpleadoRepository empleadoRepository) {
+    public EmpleadoServiceImpl(EmpleadoRepository empleadoRepository, RolRepository rolRepository) {
         this.empleadoRepository = empleadoRepository;
+        this.rolRepository = rolRepository;
     }
 
+
     @Override
-    public List<Empleado> getEmpleadosPorRol() {
-        return null;
+    public Empleado getEmpleadoById(int id) {
+        return empleadoRepository.findById(id).orElse(null);
     }
 
     @Override
@@ -71,7 +75,7 @@ public class EmpleadosServiceImpl implements EmpleadoService {
     }
 
     @Override
-    public Map<String,String> crearEmpleado(CrearEmpleadoDTO empleadoDTO, Rol rol) {
+    public Map<String,String> crearEmpleado(EditarEmpleadoDTO empleadoDTO) {
         Map<String,String> response = new HashMap<>();
         try {
             Empleado e = empleadoRepository.findByNombre(empleadoDTO.getNombre());
@@ -80,6 +84,7 @@ public class EmpleadosServiceImpl implements EmpleadoService {
                 response.put("message","Empleado ya existe");
             }
             if (e!=null){
+                Rol rol = rolRepository.findByRol(empleadoDTO.getRol());
                 Empleado empleadoGuardar = Empleado.builder()
                         .nombre(empleadoDTO.getNombre())
                         .email(empleadoDTO.getEmail())
@@ -101,9 +106,10 @@ public class EmpleadosServiceImpl implements EmpleadoService {
     }
 
     @Override
-    public Map<String, String> actualizarEmpleado(int id, CrearEmpleadoDTO empleadoDTO, Rol rolEmpleado) {
+    public Map<String, String> actualizarEmpleado(int id, EditarEmpleadoDTO empleadoDTO) {
         Map<String, String> response = new HashMap<>();
         Empleado empleado = empleadoRepository.findById(id).orElse(null);
+        Rol rolEmpleado = rolRepository.findByRol(empleadoDTO.getRol());
         try {
             if (empleado != null) {
                 empleado.setNombre(empleadoDTO.getNombre());
@@ -123,5 +129,10 @@ public class EmpleadosServiceImpl implements EmpleadoService {
             response.put("message", "Error al actualizar el empleado");
         }
         return response;
+    }
+
+    @Override
+    public Empleado getEmpleadoByNombre(String nombre) {
+        return empleadoRepository.findByNombre(nombre);
     }
 }

@@ -1,7 +1,6 @@
-package com.marioborrego.gestordocumentalbackend.repositories;
+package com.marioborrego.gestordocumentalbackend.domain.repositories;
 
-import com.marioborrego.gestordocumentalbackend.models.Rol;
-import jakarta.persistence.Id;
+import com.marioborrego.gestordocumentalbackend.domain.models.Rol;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

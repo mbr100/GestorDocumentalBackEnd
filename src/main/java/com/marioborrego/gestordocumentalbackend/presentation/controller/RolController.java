@@ -1,10 +1,10 @@
 package com.marioborrego.gestordocumentalbackend.presentation.controller;
 
-import com.marioborrego.gestordocumentalbackend.models.Rol;
+import com.marioborrego.gestordocumentalbackend.domain.models.Rol;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.rolDTO.EditarRolDTO;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.rolDTO.RolDTO;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.rolDTO.RolesDTO;
-import com.marioborrego.gestordocumentalbackend.services.RolService;
+import com.marioborrego.gestordocumentalbackend.business.services.interfaces.RolService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -45,6 +45,7 @@ public class RolController {
              }
              return ResponseEntity.status(HttpStatus.OK).body(rolesConEmpleados);
         } catch (Exception e) {
+            logger.error("Error al recuperar los roles con empleados", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
@@ -67,6 +68,7 @@ public class RolController {
             }
             return ResponseEntity.status(HttpStatus.OK).body(rolesDTOS);
         } catch (Exception e) {
+            logger.error("Error al recuperar los roles", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
@@ -94,6 +96,7 @@ public class RolController {
             }
             return ResponseEntity.status(status).body(message);
         } catch (Exception e) {
+            logger.error("Error al eliminar el rol {}", rol, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
@@ -122,6 +125,7 @@ public class RolController {
         } catch (Exception e) {
             message.put("message", "Error al actualizar el rol");
             status = HttpStatus.INTERNAL_SERVER_ERROR;
+            logger.error("Error al actualizar el rol {}", rol.getAntiuguoRol(), e);
             return ResponseEntity.status(status).body(message);
         }
     }
@@ -148,7 +152,18 @@ public class RolController {
             mensaje.put("status", "error");
             mensaje.put("message", "Error al crear el rol");
             status = HttpStatus.INTERNAL_SERVER_ERROR;
+            logger.error("Error al crear el rol {}", rol.getRol(), e);
             return ResponseEntity.status(status).body(mensaje);
         }
+    }
+
+    @GetMapping()
+    public ResponseEntity<List<Rol>> getAllRolesProyectos() {
+        List<Rol> roles = rolService.getAllRolesProyectos();
+        if (roles.isEmpty()) {
+            logger.error("No se encontraron roles");
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(roles);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(roles);
     }
 }

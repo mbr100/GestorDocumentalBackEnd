@@ -1,11 +1,13 @@
 package com.marioborrego.gestordocumentalbackend.configuration;
 
-import com.marioborrego.gestordocumentalbackend.models.Empleado;
-import com.marioborrego.gestordocumentalbackend.models.Proyectos;
-import com.marioborrego.gestordocumentalbackend.models.Rol;
-import com.marioborrego.gestordocumentalbackend.repositories.EmpleadoRepository;
-import com.marioborrego.gestordocumentalbackend.repositories.ProyectosRepository;
-import com.marioborrego.gestordocumentalbackend.repositories.RolRepository;
+import com.marioborrego.gestordocumentalbackend.domain.models.Carpeta;
+import com.marioborrego.gestordocumentalbackend.domain.models.Empleado;
+import com.marioborrego.gestordocumentalbackend.domain.models.Proyectos;
+import com.marioborrego.gestordocumentalbackend.domain.models.Rol;
+import com.marioborrego.gestordocumentalbackend.domain.repositories.CarpetaRepository;
+import com.marioborrego.gestordocumentalbackend.domain.repositories.EmpleadoRepository;
+import com.marioborrego.gestordocumentalbackend.domain.repositories.ProyectosRepository;
+import com.marioborrego.gestordocumentalbackend.domain.repositories.RolRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +18,7 @@ import java.util.Set;
 @Configuration
 public class DataLoaderExample {
     @Bean
-    CommandLineRunner initDatabase(RolRepository rolRepository, EmpleadoRepository empleadoRepository, ProyectosRepository proyectosRepository) {
+    CommandLineRunner initDatabase(RolRepository rolRepository, EmpleadoRepository empleadoRepository, ProyectosRepository proyectosRepository, CarpetaRepository carpetaRepository) {
         return args -> {
             // Crear roles
             Rol gestorProyectos = new Rol("Gestor de proyectos");
@@ -40,6 +42,12 @@ public class DataLoaderExample {
             Empleado empleado1 = Empleado.builder()
                     .nombre("Mario")
                     .email("mario@ejemplo.com")
+                    .telefono("123456789")
+                    .rol(gestorProyectos)
+                    .build();
+            Empleado empleado11 = Empleado.builder()
+                    .nombre("Alma beniro")
+                    .email("ew23rf4gt5@gmail.com")
                     .telefono("123456789")
                     .rol(gestorProyectos)
                     .build();
@@ -85,6 +93,7 @@ public class DataLoaderExample {
             empleadoRepository.save(empleado4);
             empleadoRepository.save(empleado5);
             empleadoRepository.save(empleado6);
+            empleadoRepository.save(empleado11);
 
             // Crear un proyecto de prueba
             Set<Empleado> empleadosProyecto = new HashSet<>();
@@ -95,7 +104,7 @@ public class DataLoaderExample {
             Set<Empleado> empleadosProyecto2 = new HashSet<>();
 
             Proyectos proyecto1 = Proyectos.builder()
-                    .codigo("000.000.001")
+                    .codigo(1)
                     .titulo("Proyecto I+D")
                     .ano(2023)
                     .cliente("Cliente 1")
@@ -103,7 +112,7 @@ public class DataLoaderExample {
                     .build();
 
             Proyectos proyecto2 = Proyectos.builder()
-                    .codigo("000.000.002")
+                    .codigo(2)
                     .titulo("Proyecto I+D+i")
                     .ano(2023)
                     .cliente("Cliente 2")
@@ -114,7 +123,113 @@ public class DataLoaderExample {
             proyectosRepository.save(proyecto1);
             proyectosRepository.save(proyecto2);
 
-        };
+            // Crear carpeta principal para el proyecto
+            Carpeta carpetaPrincipal = Carpeta.builder()
+                    .nombre("Proyecto I+D")
+                    .build();
 
+            // Estructura de carpetas
+            Carpeta oferta = Carpeta.builder()
+                    .nombre("Oferta")
+                    .padre(carpetaPrincipal)
+                    .build();
+
+            Carpeta aceptacion = Carpeta.builder()
+                    .nombre("Aceptación")
+                    .padre(oferta)
+                    .build();
+
+            Carpeta ampliacionOferta = Carpeta.builder()
+                    .nombre("Ampliación de oferta")
+                    .padre(oferta)
+                    .build();
+
+            Carpeta cliente = Carpeta.builder()
+                    .nombre("Cliente")
+                    .padre(carpetaPrincipal)
+                    .build();
+
+            Carpeta memoria = Carpeta.builder()
+                    .nombre("Memoria")
+                    .padre(cliente)
+                    .build();
+
+            Carpeta anexo2 = Carpeta.builder()
+                    .nombre("Anexo 2")
+                    .padre(cliente)
+                    .build();
+
+            Carpeta anexoSw = Carpeta.builder()
+                    .nombre("Anexo sw")
+                    .padre(cliente)
+                    .build();
+
+            Carpeta fichasAmpliacion = Carpeta.builder()
+                    .nombre("Fichas de Ampliación")
+                    .padre(cliente)
+                    .build();
+
+            // Crear subcarpetas de fichas de ampliación
+            Carpeta ficha21 = Carpeta.builder()
+                    .nombre("Fichas 2.1")
+                    .padre(fichasAmpliacion)
+                    .build();
+            Carpeta ficha22 = Carpeta.builder()
+                    .nombre("Fichas 2.2")
+                    .padre(fichasAmpliacion)
+                    .build();
+            Carpeta ficha23 = Carpeta.builder()
+                    .nombre("Fichas 2.3")
+                    .padre(fichasAmpliacion)
+                    .build();
+            Carpeta ficha24 = Carpeta.builder()
+                    .nombre("Fichas 2.4")
+                    .padre(fichasAmpliacion)
+                    .build();
+            Carpeta ficha25 = Carpeta.builder()
+                    .nombre("Fichas 2.5")
+                    .padre(fichasAmpliacion)
+                    .build();
+
+            Carpeta documentosJustificativos = Carpeta.builder()
+                    .nombre("Documentos Justificativos")
+                    .padre(cliente)
+                    .build();
+
+            Carpeta imv = Carpeta.builder()
+                    .nombre("IMV")
+                    .padre(cliente)
+                    .build();
+
+            Carpeta contable = Carpeta.builder()
+                    .nombre("Contable")
+                    .padre(carpetaPrincipal)
+                    .build();
+
+            Carpeta gestorProyecto = Carpeta.builder()
+                    .nombre("Gestor del proyecto")
+                    .padre(carpetaPrincipal)
+                    .build();
+
+            // Agregar las carpetas a la base de datos
+            carpetaRepository.save(carpetaPrincipal);
+            carpetaRepository.save(oferta);
+            carpetaRepository.save(aceptacion);
+            carpetaRepository.save(ampliacionOferta);
+            carpetaRepository.save(cliente);
+            carpetaRepository.save(memoria);
+            carpetaRepository.save(anexo2);
+            carpetaRepository.save(anexoSw);
+            carpetaRepository.save(fichasAmpliacion);
+            carpetaRepository.save(ficha21);
+            carpetaRepository.save(ficha22);
+            carpetaRepository.save(ficha23);
+            carpetaRepository.save(ficha24);
+            carpetaRepository.save(ficha25);
+            carpetaRepository.save(documentosJustificativos);
+            carpetaRepository.save(imv);
+            carpetaRepository.save(contable);
+            carpetaRepository.save(gestorProyecto);
+        };
     }
 }

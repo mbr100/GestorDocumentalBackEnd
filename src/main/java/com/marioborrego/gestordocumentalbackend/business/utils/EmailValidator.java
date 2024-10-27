@@ -1,4 +1,4 @@
-package com.marioborrego.gestordocumentalbackend.utils;
+package com.marioborrego.gestordocumentalbackend.business.utils;
 
 public class EmailValidator {
     public static boolean isEmailInValid(String email){

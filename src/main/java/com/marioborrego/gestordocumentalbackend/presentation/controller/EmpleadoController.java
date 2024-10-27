@@ -1,13 +1,13 @@
 package com.marioborrego.gestordocumentalbackend.presentation.controller;
 
-import com.marioborrego.gestordocumentalbackend.models.Rol;
-import com.marioborrego.gestordocumentalbackend.presentation.dto.empleadoDTO.CrearEmpleadoDTO;
+import com.marioborrego.gestordocumentalbackend.domain.models.Rol;
+import com.marioborrego.gestordocumentalbackend.presentation.dto.empleadoDTO.EditarEmpleadoDTO;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.empleadoDTO.ListarEmpleadoDTO;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.responseDTO.ResponseDTO;
-import com.marioborrego.gestordocumentalbackend.repositories.RolRepository;
-import com.marioborrego.gestordocumentalbackend.services.EmpleadoService;
-import com.marioborrego.gestordocumentalbackend.utils.EmailValidator;
-import com.marioborrego.gestordocumentalbackend.utils.TelefonoValidator;
+import com.marioborrego.gestordocumentalbackend.domain.repositories.RolRepository;
+import com.marioborrego.gestordocumentalbackend.business.services.interfaces.EmpleadoService;
+import com.marioborrego.gestordocumentalbackend.business.utils.EmailValidator;
+import com.marioborrego.gestordocumentalbackend.business.utils.TelefonoValidator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -105,12 +105,11 @@ public class EmpleadoController {
             @ApiResponse(responseCode = "500", description = "Error al crear el empleado")
     })
     @PostMapping
-    public ResponseEntity<ResponseDTO> crearEmpleado(@RequestBody CrearEmpleadoDTO empleadoDTO) {
+    public ResponseEntity<ResponseDTO> crearEmpleado(@RequestBody EditarEmpleadoDTO empleadoDTO) {
         try {
-            Rol rolEmpleado = rolRepository.findByRol(empleadoDTO.getRol());
-            if (rolEmpleado == null) {
+            if (empleadoDTO.getRol() == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ResponseDTO("error", "Rol no encontrado"));
+                        .body(new ResponseDTO("error", "El rol no puede ser nulo"));
             }
 
             if (empleadoDTO.getNombre() == null || TelefonoValidator.isTelefonoInValid(empleadoDTO.getTelefono()) || EmailValidator.isEmailInValid(empleadoDTO.getEmail())) {
@@ -118,7 +117,7 @@ public class EmpleadoController {
                         .body(new ResponseDTO("error", "Datos incorrectos"));
             }
 
-            Map<String, String> result = empleadoService.crearEmpleado(empleadoDTO, rolEmpleado);
+            Map<String, String> result = empleadoService.crearEmpleado(empleadoDTO);
             String status = result.get("status");
             String message = result.get("mensaje");
             return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO(status, message));
@@ -138,7 +137,7 @@ public class EmpleadoController {
             @ApiResponse(responseCode = "500", description = "Error al actualizar el empleado")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseDTO> actualizarEmpleado(@PathVariable int id, @RequestBody CrearEmpleadoDTO empleadoDTO) {
+    public ResponseEntity<ResponseDTO> actualizarEmpleado(@PathVariable int id, @RequestBody EditarEmpleadoDTO empleadoDTO) {
         try {
             Rol rolEmpleado = rolRepository.findByRol(empleadoDTO.getRol());
             if (rolEmpleado == null) {
@@ -151,7 +150,7 @@ public class EmpleadoController {
                         .body(new ResponseDTO("error", "Datos incorrectos"));
             }
 
-            Map<String, String> result = empleadoService.actualizarEmpleado(id, empleadoDTO, rolEmpleado);
+            Map<String, String> result = empleadoService.actualizarEmpleado(id, empleadoDTO);
             String status = result.get("status");
             String message = result.get("mensaje");
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO(status, message));

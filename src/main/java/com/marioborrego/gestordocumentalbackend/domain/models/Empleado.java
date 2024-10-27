@@ -1,4 +1,4 @@
-package com.marioborrego.gestordocumentalbackend.models;
+package com.marioborrego.gestordocumentalbackend.domain.models;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,6 +14,7 @@ public class Empleado {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idEmpleado;
+    @Column(unique = true)
     private String nombre;
     private String email;
     private String telefono;

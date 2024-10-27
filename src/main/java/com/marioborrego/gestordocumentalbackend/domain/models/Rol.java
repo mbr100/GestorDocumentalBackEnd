@@ -1,4 +1,4 @@
-package com.marioborrego.gestordocumentalbackend.models;
+package com.marioborrego.gestordocumentalbackend.domain.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

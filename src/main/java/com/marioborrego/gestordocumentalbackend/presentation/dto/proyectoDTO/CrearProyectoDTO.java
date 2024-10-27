@@ -9,9 +9,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CrearProyectoDTO {
-    private String codigo;
     private String titulo;
     private int ano;
     private String cliente;
-    private String idEmpleado;
+    private int idEmpleado;
 }

@@ -1,7 +1,8 @@
-package com.marioborrego.gestordocumentalbackend.models;
+package com.marioborrego.gestordocumentalbackend.domain.models;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.util.Set;
 
 @Builder
@@ -13,7 +14,8 @@ import java.util.Set;
 public class Proyectos {
     @Id
     @Column(name = "codigo")
-    private String codigo;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int codigo;
 
     @Column(name = "nombre")
     private String titulo;
