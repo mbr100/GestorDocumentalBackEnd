@@ -10,6 +10,7 @@ import com.marioborrego.gestordocumentalbackend.presentation.dto.proyectoDTO.Cre
 import com.marioborrego.gestordocumentalbackend.domain.repositories.ProyectosRepository;
 import com.marioborrego.gestordocumentalbackend.business.services.interfaces.ProyectoService;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.proyectoDTO.ListarProyectoDTO;
+import com.marioborrego.gestordocumentalbackend.presentation.dto.proyectoDTO.ListarProyectoEmpleadoDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     public Map<String, String> crearProyecto(CrearProyectoDTO proyecto) {
         Map<String, String> respuesta = new HashMap<>();
         boolean existeProyecto = proyectosRepository.findbytitulo(proyecto.getTitulo());
-        Empleado empleado = empleadoService.getEmpleadoById(proyecto.getIdEmpleado());
+        Empleado empleado = empleadoService.getEmpleadoByNombre(proyecto.getNombreEmpleado());
         if (existeProyecto) {
             respuesta.put("status", "error");
             respuesta.put("message", "El proyecto ya existe");
@@ -77,7 +78,8 @@ public class ProyectoServiceImpl implements ProyectoService {
         try {
             return proyectosRepository.findAll().stream().map(proyecto -> {
                 List<EmpleadoProyectoDTO> empleadosProyecto = new ArrayList<>();
-                proyecto.getEmpleados().stream().peek(empleado -> empleadosProyecto.add(EmpleadoProyectoDTO.builder()
+                proyecto.getEmpleados().stream().peek(empleado ->
+                        empleadosProyecto.add(EmpleadoProyectoDTO.builder()
                         .nombre(empleado.getNombre())
                         .email(empleado.getEmail())
                         .telefono(empleado.getTelefono())
@@ -130,4 +132,22 @@ public class ProyectoServiceImpl implements ProyectoService {
         }
         return respuesta;
     }
+
+    @Override
+    public List<ListarProyectoEmpleadoDTO> getProyectosEmpleado(int idEmpleado) {
+        try {
+            return empleadoService.getProyectosEmpleado(idEmpleado).stream().map(proyecto ->
+                    ListarProyectoEmpleadoDTO.builder()
+                            .idProyecto(CodeProyect.idToCodeProyect(proyecto.getCodigo()))
+                            .titulo(proyecto.getTitulo())
+                            .ano(proyecto.getAno())
+                            .cliente(proyecto.getCliente())
+                            .build()).toList();
+        } catch (Exception e) {
+            logger.error("Error al obtener los proyectos", e);
+            return List.of();
+        }
+    }
+
+
 }

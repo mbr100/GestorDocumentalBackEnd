@@ -33,4 +33,7 @@ public class Proyectos {
             inverseJoinColumns = @JoinColumn(name = "empleado_id")  // Columna de empleado
     )
     private Set<Empleado> empleados;  // Empleados asociados al proyecto
+
+    @OneToMany(mappedBy = "proyecto", cascade = CascadeType.ALL)
+    private Set<NoConformidad> noConformidades;  // No conformidades asociadas al proyecto
 }

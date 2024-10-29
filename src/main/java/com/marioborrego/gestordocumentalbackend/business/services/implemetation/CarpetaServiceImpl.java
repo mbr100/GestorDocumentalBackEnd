@@ -15,9 +15,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class CarpetaServiceImpl implements CarpetaService {
@@ -58,45 +56,169 @@ public class CarpetaServiceImpl implements CarpetaService {
                 if (!subFolder.exists()) {
                     subFolder.mkdirs(); // Crea la carpeta solo si no existe
                 }
-                // Llamada recursiva para crear subcarpetas
                 createFoldersRecursively(subFolder, folder, structure);
             }
         }
     }
 
-    @Transactional
-    public String uploadFile(String projectId, MultipartFile file) throws IOException {
-        Path projectPath = Paths.get(BASE_DIRECTORY, projectId);
-        if (!Files.exists(projectPath)) {
-            createProjectDirectory(Integer.parseInt(projectId));
+    @Override
+    public Map<String, Object> archivosProyectoParaEmpleados(String projectId) throws IOException {
+        try {
+            String rutaProyecto = BASE_DIRECTORY + "/" + projectId;
+            File carpetaProyecto = new File(rutaProyecto);
+            return obtenerEstructuraCarpetaEnJson(carpetaProyecto);
+        } catch (Exception e) {
+            throw new IOException("Error al obtener la estructura de la carpeta del proyecto", e);
         }
-
-        Path filePath = projectPath.resolve(Objects.requireNonNull(file.getOriginalFilename()));
-        file.transferTo(filePath.toFile());
-
-        return filePath.toString();
     }
 
-    public List<String> listFiles(String projectId) throws IOException {
+    @Override
+    public boolean guardarDocumentoProyecto(String projectId, String carpeta, MultipartFile documento) throws IOException {
         try {
-            List<String> fileNames = new ArrayList<>();
-            Path projectPath = Paths.get(BASE_DIRECTORY, projectId);
-
-            if (Files.exists(projectPath)) {
-                Files.list(projectPath).forEach(path -> fileNames.add(path.getFileName().toString()));
+            String rutaCarpeta = obtenerRutaCarpetaSubida(projectId, carpeta);
+            if (rutaCarpeta == null) {
+                throw new IOException("No se ha encontrado la carpeta de subida");
             }
-            return fileNames;
+            int numeroArchivos = contarArchivos(new File(rutaCarpeta));
+            if (numeroArchivos == 0) numeroArchivos = 1;
+            Path rutaDocumento = Paths.get(rutaCarpeta, (numeroArchivos +" "+ documento.getOriginalFilename()));
+            Files.write(rutaDocumento, documento.getBytes());
+            return true;
         } catch (IOException e) {
-            logger.error("Error al listar los archivos del proyecto", e);
+            logger.error("Error al guardar el documento en la carpeta del proyecto", e);
             throw e;
         }
     }
 
-    public boolean deleteFile(String projectId, String fileName) throws IOException {
-        Path filePath = Paths.get(BASE_DIRECTORY, projectId, fileName);
-        if (Files.exists(filePath)) {
-            return Files.deleteIfExists(filePath);
+    @Override
+    public boolean aceptarDocumento(String idProyecto, String ruta, String documento) throws IOException {
+        String rutaDocumento = obtenerRutaCarpetaSubida(idProyecto, ruta);
+        if (rutaDocumento == null) {
+            throw new IOException("No se ha encontrado la carpeta de subida");
+        }
+
+        File archivo = new File(rutaDocumento, documento);
+
+        // Verificar si el archivo ya está en la carpeta "Aceptado"
+        if (archivo.getParentFile().getName().equalsIgnoreCase("Aceptado")) {
+            // Retornar false si ya está en "Aceptado" para evitar duplicados
+            return false;
+        }
+
+        if (archivo.exists()) {
+            // Obtener la ruta de la carpeta "Aceptado" en el mismo nivel que la carpeta actual
+            File carpetaPadre = archivo.getParentFile().getName().equalsIgnoreCase("Rechazado")
+                    ? archivo.getParentFile().getParentFile()
+                    : archivo.getParentFile();
+
+            File carpetaAceptado = new File(carpetaPadre, "Aceptado");
+
+            // Crear la carpeta "Aceptado" si no existe
+            if (!carpetaAceptado.exists()) {
+                carpetaAceptado.mkdirs();
+            }
+
+            File archivoAceptado = new File(carpetaAceptado, documento);
+            Files.move(archivo.toPath(), archivoAceptado.toPath());
+            return true;
         }
         return false;
+    }
+
+
+    public boolean rechazarDocumento(String idProyecto, String ruta, String documento) throws IOException {
+        String rutaDocumento = obtenerRutaCarpetaSubida(idProyecto, ruta);
+        if (rutaDocumento == null) {
+            throw new IOException("No se ha encontrado la carpeta de subida");
+        }
+
+        File archivo = new File(rutaDocumento, documento);
+        // Verificar si el archivo ya está en la carpeta "Rechazado"
+        if (archivo.getParentFile().getName().equalsIgnoreCase("Rechazado")) {
+            // Retornar false si ya está en "Aceptado" para evitar duplicados
+            return false;
+        }
+
+        if (archivo.exists()) {
+            // Obtener la ruta de la carpeta que contiene "Rechazado" en el mismo nivel que la carpeta actual
+            File carpetaPadre = archivo.getParentFile().getName().equalsIgnoreCase("Aceptado")
+                    ? archivo.getParentFile().getParentFile()
+                    : archivo.getParentFile();
+
+            // Asegurar que el nombre de la carpeta sea siempre "Rechazado" en minúsculas y sin duplicados
+            File carpetaRechazado = new File(carpetaPadre, "Rechazado");
+
+            // Crear la carpeta "Rechazado" si no existe
+            if (!carpetaRechazado.exists()) {
+                carpetaRechazado.mkdirs();
+            }
+
+            File archivoRechazado = new File(carpetaRechazado, documento);
+            Files.move(archivo.toPath(), archivoRechazado.toPath());
+            return true;
+        }
+        return false;
+    }
+
+
+
+    private Map<String, Object> obtenerEstructuraCarpetaEnJson(File carpeta) {
+        Map<String, Object> mapaCarpeta = new HashMap<>();
+        mapaCarpeta.put("nombre", carpeta.getName());
+        if (carpeta.isDirectory()) {
+            List<Object> hijos = new ArrayList<>();
+            for (File fichero : Objects.requireNonNull(carpeta.listFiles())) {
+                if (fichero.getName().equals(".DS_Store")) {
+                    continue;
+                }
+                hijos.add(obtenerEstructuraCarpetaEnJson(fichero));
+            }
+            mapaCarpeta.put("hijos", hijos);
+        } else {
+            mapaCarpeta.put("tipo", "fichero");
+        }
+        return mapaCarpeta;
+    }
+
+    private String obtenerRutaCarpetaSubida(String idProyecto, String nombreCarpeta) throws IOException {
+        File baseDir = new File(BASE_DIRECTORY+"/"+idProyecto);
+        return buscarCarpetaRecursivamente(baseDir, nombreCarpeta);
+    }
+
+    private String buscarCarpetaRecursivamente(File directorio, String nombreCarpeta) {
+        // Verificamos si el directorio es una carpeta
+        if (directorio.isDirectory()) {
+            // Listamos los archivos y carpetas dentro de este directorio
+            for (File archivo : Objects.requireNonNull(directorio.listFiles())) {
+                // Si encontramos la carpeta, retornamos su ruta
+                if (archivo.isDirectory() && archivo.getName().equals(nombreCarpeta)) {
+                    return archivo.getAbsolutePath();
+                }
+                // Si no es la carpeta, buscamos en su interior
+                String resultado = buscarCarpetaRecursivamente(archivo, nombreCarpeta);
+                if (resultado != null) {
+                    return resultado; // Retornamos la ruta si la encontramos
+                }
+            }
+        }
+        return null; // Retornamos null si no encontramos la carpeta
+    }
+
+    private int contarArchivos(File directorio) {
+        int contador = 0;
+
+        // Listamos los archivos y carpetas dentro del directorio
+        File[] archivos = directorio.listFiles();
+        if (archivos != null) {
+            for (File archivo : archivos) {
+                if (archivo.isFile()) {
+                    contador++; // Incrementa el contador si es un archivo
+                } else if (archivo.isDirectory()) {
+                    // Llama a sí mismo si es un directorio para contar los archivos dentro
+                    contador += contarArchivos(archivo);
+                }
+            }
+        }
+        return contador;
     }
 }

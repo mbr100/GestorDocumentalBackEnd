@@ -19,25 +19,18 @@ import java.util.Set;
 public class DataLoaderExample {
     @Bean
     CommandLineRunner initDatabase(RolRepository rolRepository, EmpleadoRepository empleadoRepository, ProyectosRepository proyectosRepository, CarpetaRepository carpetaRepository) {
-        return args -> {
+        return _ -> {
             // Crear roles
             Rol gestorProyectos = new Rol("Gestor de proyectos");
             Rol gestorExpertos = new Rol("Gestor de expertos");
             Rol comercial = new Rol("Comercial");
             Rol administrador = new Rol("Administrador");
-            Rol rol = new Rol("Rol");
-            Rol rol1 = new Rol("Rol1");
-            Rol rol2 = new Rol("Rol2");
-            Rol rol3 = new Rol("Rol3");
+
             // Guardar roles en la base de datos
             rolRepository.save(gestorProyectos);
             rolRepository.save(gestorExpertos);
             rolRepository.save(comercial);
             rolRepository.save(administrador);
-            rolRepository.save(rol);
-            rolRepository.save(rol1);
-            rolRepository.save(rol2);
-            rolRepository.save(rol3);
 
             Empleado empleado1 = Empleado.builder()
                     .nombre("Mario")

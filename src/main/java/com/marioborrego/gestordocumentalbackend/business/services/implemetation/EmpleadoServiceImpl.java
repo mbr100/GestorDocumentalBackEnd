@@ -1,6 +1,7 @@
 package com.marioborrego.gestordocumentalbackend.business.services.implemetation;
 
 import com.marioborrego.gestordocumentalbackend.domain.models.Empleado;
+import com.marioborrego.gestordocumentalbackend.domain.models.Proyectos;
 import com.marioborrego.gestordocumentalbackend.domain.models.Rol;
 import com.marioborrego.gestordocumentalbackend.domain.repositories.RolRepository;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.empleadoDTO.EditarEmpleadoDTO;
@@ -84,12 +85,11 @@ public class EmpleadoServiceImpl implements EmpleadoService {
                 response.put("message","Empleado ya existe");
             }
             if (e!=null){
-                Rol rol = rolRepository.findByRol(empleadoDTO.getRol());
                 Empleado empleadoGuardar = Empleado.builder()
                         .nombre(empleadoDTO.getNombre())
                         .email(empleadoDTO.getEmail())
                         .telefono(empleadoDTO.getTelefono())
-                        .rol(rol)
+                        .rol(rolRepository.findByRol(empleadoDTO.getRol()))
                         .build();
                 empleadoRepository.save(empleadoGuardar);
                 response.put("status","success");
@@ -134,5 +134,10 @@ public class EmpleadoServiceImpl implements EmpleadoService {
     @Override
     public Empleado getEmpleadoByNombre(String nombre) {
         return empleadoRepository.findByNombre(nombre);
+    }
+
+    @Override
+    public List<Proyectos> getProyectosEmpleado(int idEmpleado) {
+        return empleadoRepository.getProyectosEmpleado(idEmpleado);
     }
 }

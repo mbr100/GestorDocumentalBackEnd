@@ -12,5 +12,5 @@ public class CrearProyectoDTO {
     private String titulo;
     private int ano;
     private String cliente;
-    private int idEmpleado;
+    private String nombreEmpleado;
 }
