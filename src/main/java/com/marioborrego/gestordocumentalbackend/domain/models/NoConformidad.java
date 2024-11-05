@@ -27,6 +27,8 @@ public class NoConformidad {
 
     private Date fecha;
 
+    private int orden;
+
     @Enumerated(EnumType.STRING)
     private Estado estado;
 
