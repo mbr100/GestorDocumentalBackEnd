@@ -1,5 +1,6 @@
 package com.marioborrego.gestordocumentalbackend.domain.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.marioborrego.gestordocumentalbackend.domain.models.enums.Estado;
 import com.marioborrego.gestordocumentalbackend.domain.models.enums.Responsable;
 import com.marioborrego.gestordocumentalbackend.domain.models.enums.TipoNc;
@@ -7,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "no_conformidad")
@@ -23,11 +25,11 @@ public class NoConformidad {
     @Enumerated(EnumType.STRING)
     private TipoNc tipoNc;
 
-    private String Contenido;
+
+    @OneToMany(mappedBy = "noConformidad", cascade = CascadeType.ALL)
+    private List<ContenidoNoConformidad> contenidos;
 
     private Date fecha;
-
-    private int orden;
 
     @Enumerated(EnumType.STRING)
     private Estado estado;
@@ -35,15 +37,9 @@ public class NoConformidad {
     @Enumerated(EnumType.STRING)
     private Responsable responsable;
 
-    @OneToOne(mappedBy = "noConformidadPadre")  // Corregido el nombre del mappedBy
-    private NoConformidad noConformidadHija;
-
-    @ManyToOne
-    @JoinColumn(name = "padre_id")
-    private NoConformidad noConformidadPadre;
 
     @ManyToOne
     @JoinColumn(name = "proyecto_id")
-    private Proyectos proyecto;  // Proyecto al que pertenece la no conformidad
+    private Proyectos proyecto;
 }
 

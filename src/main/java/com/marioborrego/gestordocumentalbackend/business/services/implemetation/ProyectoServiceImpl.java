@@ -136,6 +136,18 @@ public class ProyectoServiceImpl implements ProyectoService {
     @Override
     public List<ListarProyectoEmpleadoDTO> getProyectosEmpleado(int idEmpleado) {
         try {
+            if (empleadoService.getEmpleadoById(idEmpleado) == null) {
+                return List.of();
+            }
+            if (empleadoService.getEmpleadoById(idEmpleado).getRol().getRol().equals("Administrador")) {
+                return this.getAllProyectos().stream().map(proyecto ->
+                        ListarProyectoEmpleadoDTO.builder()
+                                .idProyecto(proyecto.getIdProyecto())
+                                .titulo(proyecto.getTitulo())
+                                .ano(proyecto.getAno())
+                                .cliente(proyecto.getCliente())
+                                .build()).toList();
+            }
             return empleadoService.getProyectosEmpleado(idEmpleado).stream().map(proyecto ->
                     ListarProyectoEmpleadoDTO.builder()
                             .idProyecto(CodeProyect.idToCodeProyect(proyecto.getCodigo()))

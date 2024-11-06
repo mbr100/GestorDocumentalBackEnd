@@ -1,24 +1,22 @@
 package com.marioborrego.gestordocumentalbackend.configuration;
 
-import com.marioborrego.gestordocumentalbackend.domain.models.Carpeta;
-import com.marioborrego.gestordocumentalbackend.domain.models.Empleado;
-import com.marioborrego.gestordocumentalbackend.domain.models.Proyectos;
-import com.marioborrego.gestordocumentalbackend.domain.models.Rol;
-import com.marioborrego.gestordocumentalbackend.domain.repositories.CarpetaRepository;
-import com.marioborrego.gestordocumentalbackend.domain.repositories.EmpleadoRepository;
-import com.marioborrego.gestordocumentalbackend.domain.repositories.ProyectosRepository;
-import com.marioborrego.gestordocumentalbackend.domain.repositories.RolRepository;
+import com.marioborrego.gestordocumentalbackend.business.services.interfaces.CarpetaService;
+import com.marioborrego.gestordocumentalbackend.domain.models.*;
+import com.marioborrego.gestordocumentalbackend.domain.models.enums.Estado;
+import com.marioborrego.gestordocumentalbackend.domain.models.enums.Responsable;
+import com.marioborrego.gestordocumentalbackend.domain.models.enums.TipoNc;
+import com.marioborrego.gestordocumentalbackend.domain.repositories.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Configuration
 public class DataLoaderExample {
     @Bean
-    CommandLineRunner initDatabase(RolRepository rolRepository, EmpleadoRepository empleadoRepository, ProyectosRepository proyectosRepository, CarpetaRepository carpetaRepository) {
+    CommandLineRunner initDatabase(RolRepository rolRepository, EmpleadoRepository empleadoRepository, ProyectosRepository proyectosRepository, CarpetaRepository carpetaRepository,
+                                   NoConformidadRepository noConformidadRepository, CarpetaService carpetaService) {
         return _ -> {
             // Crear roles
             Rol gestorProyectos = new Rol("Gestor de proyectos");
@@ -79,6 +77,13 @@ public class DataLoaderExample {
                     .rol(comercial)
                     .build();
 
+            Empleado empleado7 = Empleado.builder()
+                    .nombre("admin")
+                    .email("admin@ejemplo.com")
+                    .telefono("555666777")
+                    .rol(administrador)
+                    .build();
+
             // Guardar empleados en la base de datos
             empleadoRepository.save(empleado1);
             empleadoRepository.save(empleado2);
@@ -87,6 +92,7 @@ public class DataLoaderExample {
             empleadoRepository.save(empleado5);
             empleadoRepository.save(empleado6);
             empleadoRepository.save(empleado11);
+            empleadoRepository.save(empleado7);
 
             // Crear un proyecto de prueba
             Set<Empleado> empleadosProyecto = new HashSet<>();
@@ -111,6 +117,8 @@ public class DataLoaderExample {
                     .cliente("Cliente 2")
                     .empleados(empleadosProyecto2)  // Asignar los empleados al proyecto
                     .build();
+
+
 
             // Guardar el proyecto en la base de datos
             proyectosRepository.save(proyecto1);
@@ -223,6 +231,77 @@ public class DataLoaderExample {
             carpetaRepository.save(imv);
             carpetaRepository.save(contable);
             carpetaRepository.save(gestorProyecto);
+
+            carpetaService.createProjectDirectory(proyecto1.getCodigo());
+            carpetaService.createProjectDirectory(proyecto2.getCodigo());
+
+            NoConformidad nc1 = NoConformidad.builder()
+                    .tipoNc(TipoNc.GP)
+                    .fecha(new Date())
+                    .proyecto(proyecto1)
+                    .estado(Estado.CERRADA)
+                    .responsable(Responsable.GestorProyecto)
+                    .build();
+            ContenidoNoConformidad c1 = ContenidoNoConformidad.builder()
+                    .contenido("No se ven objetivos")
+                    .noConformidad(nc1)
+                    .orden(1)
+                    .build();
+            ContenidoNoConformidad c2 = ContenidoNoConformidad.builder()
+                    .contenido("Estan en apartado xxxx")
+                    .noConformidad(nc1)
+                    .orden(2)
+                    .build();
+            List<ContenidoNoConformidad> ncgpcontenido = new ArrayList<>();
+            ncgpcontenido.add(c1);
+            ncgpcontenido.add(c2);
+            nc1.setContenidos(ncgpcontenido);
+            noConformidadRepository.save(nc1);
+
+            // Contenidos para NoConformidad 2 (Proyecto 1)
+            NoConformidad nc2 = NoConformidad.builder()
+                    .tipoNc(TipoNc.GP)
+                    .fecha(new Date())
+                    .proyecto(proyecto1)
+                    .estado(Estado.ABIERTA)
+                    .responsable(Responsable.GestorProyecto)
+                    .build();
+            ContenidoNoConformidad c3 = ContenidoNoConformidad.builder()
+                    .contenido("Pendiente de datos de rendimiento")
+                    .orden(1)
+                    .build();
+            ContenidoNoConformidad c4 = ContenidoNoConformidad.builder()
+                    .contenido("Datos disponibles en sistema")
+                    .orden(2)
+                    .build();
+            List<ContenidoNoConformidad> ncgpcontenido2 = new ArrayList<>();
+            ncgpcontenido2.add(c3);
+            ncgpcontenido2.add(c4);
+            nc2.setContenidos(ncgpcontenido2);
+            noConformidadRepository.save(nc2);
+
+            // Contenidos para NoConformidad 3 (Proyecto 2)
+            NoConformidad nc3 = NoConformidad.builder()
+                    .tipoNc(TipoNc.Contable)
+                    .fecha(new Date())
+                    .proyecto(proyecto2)
+                    .estado(Estado.ABIERTA)
+                    .responsable(Responsable.Contable)
+                    .build();
+            ContenidoNoConformidad c5 = ContenidoNoConformidad.builder()
+                    .contenido("Se requiere ajuste en presupuesto")
+                    .orden(1)
+                    .build();
+            ContenidoNoConformidad c6 = ContenidoNoConformidad.builder()
+                    .contenido("Se ha realizado ajuste solicitado")
+                    .orden(2)
+                    .build();
+            List<ContenidoNoConformidad> ncgpcontenido3 = new ArrayList<>();
+            ncgpcontenido3.add(c5);
+            ncgpcontenido3.add(c6);
+            nc3.setContenidos(ncgpcontenido3);
+
+            noConformidadRepository.save(nc3);
         };
     }
 }
