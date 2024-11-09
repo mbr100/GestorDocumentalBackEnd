@@ -38,5 +38,5 @@ public class Proyectos {
 
     @JsonIgnore
     @OneToMany(mappedBy = "proyecto", cascade = CascadeType.ALL)
-    private Set<NoConformidad> noConformidades;  // No conformidades asociadas al proyecto
+    private Set<NoConformidad> noConformidad;  // No conformidades asociadas al proyecto
 }

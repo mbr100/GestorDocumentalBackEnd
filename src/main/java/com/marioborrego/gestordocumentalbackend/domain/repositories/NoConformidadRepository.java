@@ -1,14 +1,15 @@
 package com.marioborrego.gestordocumentalbackend.domain.repositories;
 
 import com.marioborrego.gestordocumentalbackend.domain.models.NoConformidad;
-import com.marioborrego.gestordocumentalbackend.domain.models.Proyectos;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface NoConformidadRepository extends JpaRepository<NoConformidad, Long> {
-    @Query("select n from NoConformidad n where n.proyecto.codigo =:idproyecto")
-    List<NoConformidad> findNoConformidadByProyecto(@Param("idproyecto") Long idproyecto);
+
+  @Query("SELECT nc FROM NoConformidad nc WHERE nc.proyecto.codigo =:idProyecto")
+  List<NoConformidad> noConformidadesPorProyecto(Long idProyecto);
 }

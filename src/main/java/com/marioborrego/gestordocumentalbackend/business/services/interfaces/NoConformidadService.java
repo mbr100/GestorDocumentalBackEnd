@@ -7,5 +7,5 @@ import java.util.List;
 
 @Service
 public interface NoConformidadService {
-    List<NoConformidad> obtenerNoConformiddadProyecto(String idProyecto);
+    List<NoConformidad> noConformidadesPorProyecto(String idProyecto);
 }

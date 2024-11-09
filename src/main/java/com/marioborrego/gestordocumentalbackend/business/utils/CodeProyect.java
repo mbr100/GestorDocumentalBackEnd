@@ -23,4 +23,8 @@ public class CodeProyect {
         return Integer.parseInt(cleanedCode);
     }
 
+    public static Long decode(String code) {
+        String cleanedCode = code.replace(".", "");
+        return Long.parseLong(cleanedCode);
+    }
 }

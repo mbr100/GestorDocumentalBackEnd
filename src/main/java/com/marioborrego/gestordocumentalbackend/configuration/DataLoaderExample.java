@@ -235,73 +235,137 @@ public class DataLoaderExample {
             carpetaService.createProjectDirectory(proyecto1.getCodigo());
             carpetaService.createProjectDirectory(proyecto2.getCodigo());
 
+
+            // Crear no conformidades
+            ContenidoPuntoNoConformidad contenidoNC1_1 = ContenidoPuntoNoConformidad.builder()
+                    .contenido("No se localizan los documentos")
+                    .fecha(new Date(1693526400000L))
+                    .build();
+            ContenidoPuntoNoConformidad contenidoNC1_2 = ContenidoPuntoNoConformidad.builder()
+                    .contenido("Se aportan documentos")
+                    .fecha(new Date(1693612800000L))
+                    .build();
+            ContenidoPuntoNoConformidad contenidoNC1_3 = ContenidoPuntoNoConformidad.builder()
+                    .contenido("Los documentos aportados no cumplen los requisitos minimos")
+                    .fecha(new Date(1693699200000L))
+                    .build();
+            List<ContenidoPuntoNoConformidad> contenidosNC1 = new ArrayList<>();
+            contenidosNC1.add(contenidoNC1_1);
+            contenidosNC1.add(contenidoNC1_2);
+            contenidosNC1.add(contenidoNC1_3);
+
+            PuntosNoConformidad nc1_1 = PuntosNoConformidad.builder()
+                    .contenidos(contenidosNC1)
+                    .fecha(new Date())
+                    .estado(Estado.ABIERTA)
+                    .responsable(Responsable.Cliente)
+                    .build();
+
+            List<PuntosNoConformidad> noConformidades1 = new ArrayList<>();
+            noConformidades1.add(nc1_1);
+
             NoConformidad nc1 = NoConformidad.builder()
                     .tipoNc(TipoNc.GP)
-                    .fecha(new Date())
                     .proyecto(proyecto1)
-                    .estado(Estado.CERRADA)
-                    .responsable(Responsable.GestorProyecto)
+                    .version(1)
+                    .puntosNoConformidades(noConformidades1)
                     .build();
-            ContenidoNoConformidad c1 = ContenidoNoConformidad.builder()
-                    .contenido("No se ven objetivos")
-                    .noConformidad(nc1)
-                    .orden(1)
-                    .build();
-            ContenidoNoConformidad c2 = ContenidoNoConformidad.builder()
-                    .contenido("Estan en apartado xxxx")
-                    .noConformidad(nc1)
-                    .orden(2)
-                    .build();
-            List<ContenidoNoConformidad> ncgpcontenido = new ArrayList<>();
-            ncgpcontenido.add(c1);
-            ncgpcontenido.add(c2);
-            nc1.setContenidos(ncgpcontenido);
+
+            nc1_1.setNoConformidad(nc1);
+            contenidoNC1_1.setPuntosNoConformidad(nc1_1);
+            contenidoNC1_2.setPuntosNoConformidad(nc1_1);
+            contenidoNC1_3.setPuntosNoConformidad(nc1_1);
             noConformidadRepository.save(nc1);
 
-            // Contenidos para NoConformidad 2 (Proyecto 1)
-            NoConformidad nc2 = NoConformidad.builder()
+            // Crear contenidos para NoConformidad 1 de Proyecto 1
+            ContenidoPuntoNoConformidad contenidoNC2_1 = ContenidoPuntoNoConformidad.builder()
+                    .contenido("No se localizan los documentos")
+                    .fecha(new Date(1693785600000L))
+                    .build();
+            ContenidoPuntoNoConformidad contenidoNC2_2 = ContenidoPuntoNoConformidad.builder()
+                    .contenido("Se aportan documentos")
+                    .fecha(new Date(1693872000000L))
+                    .build();
+            ContenidoPuntoNoConformidad contenidoNC2_3 = ContenidoPuntoNoConformidad.builder()
+                    .contenido("Los documentos aportados no cumplen los requisitos mínimos")
+                    .fecha(new Date(1693958400000L))
+                    .build();
+            List<ContenidoPuntoNoConformidad> contenidosNC2 = Arrays.asList(contenidoNC2_1, contenidoNC2_2, contenidoNC2_3);
+
+            PuntosNoConformidad nc2_1 = PuntosNoConformidad.builder()
+                    .contenidos(contenidosNC2)
+                    .fecha(new Date())
+                    .estado(Estado.ABIERTA)
+                    .responsable(Responsable.Cliente)
+                    .build();
+
+            contenidoNC2_1.setPuntosNoConformidad(nc2_1);
+            contenidoNC2_2.setPuntosNoConformidad(nc2_1);
+            contenidoNC2_3.setPuntosNoConformidad(nc2_1);
+
+            // Crear TERCERA NoConformidad para Proyecto 1
+            ContenidoPuntoNoConformidad contenidoNC3_1 = ContenidoPuntoNoConformidad.builder()
+                    .contenido("Los documentos están incompletos")
+                    .fecha(new Date(1694044800000L))
+                    .build();
+            ContenidoPuntoNoConformidad contenidoNC3_2 = ContenidoPuntoNoConformidad.builder()
+                    .contenido("Falta el anexo requerido")
+                    .fecha(new Date(1694044800000L))
+                    .build();
+            List<ContenidoPuntoNoConformidad> contenidosNC3 = Arrays.asList(contenidoNC3_1, contenidoNC3_2);
+
+            PuntosNoConformidad nc3_1 = PuntosNoConformidad.builder()
+                    .contenidos(contenidosNC3)
+                    .fecha(new Date())
+                    .estado(Estado.CERRADA)
+                    .responsable(Responsable.Comite)
+                    .build();
+
+            contenidoNC3_1.setPuntosNoConformidad(nc3_1);
+            contenidoNC3_2.setPuntosNoConformidad(nc3_1);
+
+            List<PuntosNoConformidad> noConformidades3 = Arrays.asList(nc2_1, nc3_1);
+
+            NoConformidad noConformidadProyecto1 = NoConformidad.builder()
                     .tipoNc(TipoNc.GP)
-                    .fecha(new Date())
                     .proyecto(proyecto1)
-                    .estado(Estado.ABIERTA)
-                    .responsable(Responsable.GestorProyecto)
+                    .version(1)
+                    .puntosNoConformidades(noConformidades3)
                     .build();
-            ContenidoNoConformidad c3 = ContenidoNoConformidad.builder()
-                    .contenido("Pendiente de datos de rendimiento")
-                    .orden(1)
-                    .build();
-            ContenidoNoConformidad c4 = ContenidoNoConformidad.builder()
-                    .contenido("Datos disponibles en sistema")
-                    .orden(2)
-                    .build();
-            List<ContenidoNoConformidad> ncgpcontenido2 = new ArrayList<>();
-            ncgpcontenido2.add(c3);
-            ncgpcontenido2.add(c4);
-            nc2.setContenidos(ncgpcontenido2);
-            noConformidadRepository.save(nc2);
 
-            // Contenidos para NoConformidad 3 (Proyecto 2)
-            NoConformidad nc3 = NoConformidad.builder()
-                    .tipoNc(TipoNc.Contable)
-                    .fecha(new Date())
-                    .proyecto(proyecto2)
-                    .estado(Estado.ABIERTA)
-                    .responsable(Responsable.Contable)
-                    .build();
-            ContenidoNoConformidad c5 = ContenidoNoConformidad.builder()
-                    .contenido("Se requiere ajuste en presupuesto")
-                    .orden(1)
-                    .build();
-            ContenidoNoConformidad c6 = ContenidoNoConformidad.builder()
-                    .contenido("Se ha realizado ajuste solicitado")
-                    .orden(2)
-                    .build();
-            List<ContenidoNoConformidad> ncgpcontenido3 = new ArrayList<>();
-            ncgpcontenido3.add(c5);
-            ncgpcontenido3.add(c6);
-            nc3.setContenidos(ncgpcontenido3);
+            nc2_1.setNoConformidad(noConformidadProyecto1);
+            nc3_1.setNoConformidad(noConformidadProyecto1);
+            noConformidadRepository.save(noConformidadProyecto1);
 
-            noConformidadRepository.save(nc3);
+        // Crear cuatro NoConformidades para Proyecto 2
+            for (int i = 1; i <= 4; i++) {
+                List<ContenidoPuntoNoConformidad> contenidosProyecto2 = new ArrayList<>();
+                for (int j = 1; j <= 2; j++) {
+                    ContenidoPuntoNoConformidad contenido = ContenidoPuntoNoConformidad.builder()
+                            .contenido("Contenido de No Conformidad " + i + ", elemento " + j)
+                            .fecha(new Date(1694044800000L + (1000L*j)))
+                            .build();
+                    contenidosProyecto2.add(contenido);
+                }
+                PuntosNoConformidad noConformidadesProyecto2 = PuntosNoConformidad.builder()
+                        .contenidos(contenidosProyecto2)
+                        .fecha(new Date())
+                        .estado(i % 2 == 0 ? Estado.CERRADA : Estado.ABIERTA)
+                        .responsable(Responsable.ExpertoTecnico)
+                        .build();
+
+                contenidosProyecto2.forEach(contenido -> contenido.setPuntosNoConformidad(noConformidadesProyecto2));
+
+                NoConformidad noConformidadProyecto2 = NoConformidad.builder()
+                        .tipoNc(TipoNc.Experto4D)
+                        .proyecto(proyecto2)
+                        .version(i)
+                        .puntosNoConformidades(Collections.singletonList(noConformidadesProyecto2))
+                        .build();
+
+                noConformidadesProyecto2.setNoConformidad(noConformidadProyecto2);
+                noConformidadRepository.save(noConformidadProyecto2);
+            }
         };
     }
 }
