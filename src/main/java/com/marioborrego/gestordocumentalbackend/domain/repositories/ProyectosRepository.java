@@ -10,7 +10,9 @@ public interface ProyectosRepository extends JpaRepository<Proyectos, String> {
   @Query("SELECT CASE WHEN COUNT(p) > 0 THEN TRUE ELSE FALSE END FROM proyectos p WHERE p.titulo = :titulo")
   boolean findbytitulo(String titulo);
 
-  @Query("SELECT p FROM proyectos p WHERE p.codigo = :codigo")
-  Proyectos findByCodigo(int codigo);
+    @Query("SELECT p FROM proyectos p WHERE p.codigo = :codigo")
+    Proyectos findByCodigo(int codigo);
 
+    @Query("SELECT CASE WHEN COUNT(p) > 0 THEN TRUE ELSE FALSE END FROM proyectos p WHERE p.codigo = :i")
+    boolean existsByCodigo(int i);
 }

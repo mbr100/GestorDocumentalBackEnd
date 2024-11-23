@@ -161,5 +161,8 @@ public class ProyectoServiceImpl implements ProyectoService {
         }
     }
 
-
+    @Override
+    public boolean existeProyecto(String id) {
+        return proyectosRepository.findByCodigo(CodeProyect.codeProyectToId(id)) != null;
+    }
 }

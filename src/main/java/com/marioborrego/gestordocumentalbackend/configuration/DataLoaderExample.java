@@ -258,7 +258,7 @@ public class DataLoaderExample {
                     .contenidos(contenidosNC1)
                     .fecha(new Date())
                     .estado(Estado.ABIERTA)
-                    .responsable(Responsable.Cliente)
+                    .responsable(Responsable.GestorProyecto)
                     .build();
 
             List<PuntosNoConformidad> noConformidades1 = new ArrayList<>();
@@ -272,6 +272,7 @@ public class DataLoaderExample {
                     .build();
 
             nc1_1.setNoConformidad(nc1);
+            nc1.setEstado(Estado.ABIERTA);
             contenidoNC1_1.setPuntosNoConformidad(nc1_1);
             contenidoNC1_2.setPuntosNoConformidad(nc1_1);
             contenidoNC1_3.setPuntosNoConformidad(nc1_1);
@@ -296,7 +297,7 @@ public class DataLoaderExample {
                     .contenidos(contenidosNC2)
                     .fecha(new Date())
                     .estado(Estado.ABIERTA)
-                    .responsable(Responsable.Cliente)
+                    .responsable(Responsable.GestorProyecto)
                     .build();
 
             contenidoNC2_1.setPuntosNoConformidad(nc2_1);
@@ -317,7 +318,7 @@ public class DataLoaderExample {
             PuntosNoConformidad nc3_1 = PuntosNoConformidad.builder()
                     .contenidos(contenidosNC3)
                     .fecha(new Date())
-                    .estado(Estado.CERRADA)
+                    .estado(Estado.ABIERTA)
                     .responsable(Responsable.Comite)
                     .build();
 
@@ -331,6 +332,7 @@ public class DataLoaderExample {
                     .proyecto(proyecto1)
                     .version(1)
                     .puntosNoConformidades(noConformidades3)
+                    .estado(Estado.ABIERTA)
                     .build();
 
             nc2_1.setNoConformidad(noConformidadProyecto1);
@@ -360,6 +362,7 @@ public class DataLoaderExample {
                         .tipoNc(TipoNc.Experto4D)
                         .proyecto(proyecto2)
                         .version(i)
+                        .estado(Estado.CERRADA)
                         .puntosNoConformidades(Collections.singletonList(noConformidadesProyecto2))
                         .build();
 

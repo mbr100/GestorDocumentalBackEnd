@@ -1,5 +1,6 @@
 package com.marioborrego.gestordocumentalbackend.domain.models;
 
+import com.marioborrego.gestordocumentalbackend.domain.models.enums.Estado;
 import com.marioborrego.gestordocumentalbackend.domain.models.enums.TipoNc;
 import jakarta.persistence.*;
 import lombok.*;
@@ -28,6 +29,8 @@ public class NoConformidad {
 
     @OneToMany(mappedBy = "noConformidad", cascade = CascadeType.ALL)
     private List<PuntosNoConformidad> puntosNoConformidades;
+
+    private Estado estado;
 
     int version;
 }
