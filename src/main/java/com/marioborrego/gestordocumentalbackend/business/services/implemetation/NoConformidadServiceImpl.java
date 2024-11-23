@@ -42,6 +42,9 @@ public class NoConformidadServiceImpl implements NoConformidadService {
     @Override
     public boolean responderNoConformidad(RespuestaPuntoNoConformidad respuestaNoConformidadesProyectoDto) {
         PuntosNoConformidad puntosNoConformidad = puntosNoConformidadRepository.findById(respuestaNoConformidadesProyectoDto.getIdNoConformidad()).orElse(null);
+        if (puntosNoConformidad == null) {
+            return false;
+        }
         if (puntosNoConformidad.getEstado() == Estado.CERRADA){
             return false;
         }
