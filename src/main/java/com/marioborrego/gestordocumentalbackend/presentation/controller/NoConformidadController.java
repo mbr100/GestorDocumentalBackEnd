@@ -2,7 +2,9 @@ package com.marioborrego.gestordocumentalbackend.presentation.controller;
 
 import com.marioborrego.gestordocumentalbackend.business.services.interfaces.NoConformidadService;
 import com.marioborrego.gestordocumentalbackend.business.services.interfaces.ProyectoService;
+import com.marioborrego.gestordocumentalbackend.presentation.dto.ncsDTO.CrearNoConformidadDto;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.ncsDTO.NoConformidadesProyectoDto;
+import com.marioborrego.gestordocumentalbackend.presentation.dto.ncsDTO.NuevoPuntoNcDTO;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.ncsDTO.RespuestaPuntoNoConformidad;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,5 +53,27 @@ public class NoConformidadController {
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.badRequest().build();
+    }
+
+    @PostMapping("/crearPuntoNoConformidad")
+    public ResponseEntity<?> crearPuntoNoConformidad(@RequestBody NuevoPuntoNcDTO nuevoPuntoNcDTO) {
+        log.info("Respuesta: {}", nuevoPuntoNcDTO.nuevoPuntoNC);
+        log.info("Respuesta: {}", nuevoPuntoNcDTO.idNoConformidad);
+        log.info("Respuesta: {}", nuevoPuntoNcDTO.idProyecto);
+        if (nuevoPuntoNcDTO.getNuevoPuntoNC() == null || nuevoPuntoNcDTO.getIdNoConformidad() == null|| nuevoPuntoNcDTO.getIdProyecto() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        boolean puntoCreado = noConformidadService.crearPuntoNoConformidad(nuevoPuntoNcDTO);
+        return ResponseEntity.status(puntoCreado ? HttpStatus.OK : HttpStatus.BAD_REQUEST).build();
+    }
+
+    @PostMapping("/crearNoConformidad")
+    public ResponseEntity<?> crearNoConformidad(@RequestBody CrearNoConformidadDto crearNoConformidadDto) {
+        log.info("Respuesta: {}", crearNoConformidadDto);
+        if (crearNoConformidadDto.getIdProyecto() == null || crearNoConformidadDto.getTipo() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        boolean noConformidadCreada = noConformidadService.crearNoConformidad(crearNoConformidadDto);
+        return ResponseEntity.status(noConformidadCreada ? HttpStatus.OK : HttpStatus.BAD_REQUEST).build();
     }
 }

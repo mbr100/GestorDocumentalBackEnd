@@ -54,7 +54,10 @@ public class CarpetaServiceImpl implements CarpetaService {
                 // Crear la carpeta subFolder
                 File subFolder = new File(baseFolder, folder.getNombre());
                 if (!subFolder.exists()) {
-                    subFolder.mkdirs(); // Crea la carpeta solo si no existe
+                    boolean result = subFolder.mkdirs(); // Crea la carpeta solo si no existe
+                    if (!result) {
+                        logger.error("No se ha podido crear la carpeta: {}", subFolder.getAbsolutePath());
+                    }
                 }
                 createFoldersRecursively(subFolder, folder, structure);
             }
@@ -115,16 +118,28 @@ public class CarpetaServiceImpl implements CarpetaService {
 
             // Crear la carpeta "Aceptado" si no existe
             if (!carpetaAceptado.exists()) {
-                carpetaAceptado.mkdirs();
+                boolean result = carpetaAceptado.mkdirs();
+                if (!result) {
+                    throw new IOException("No se ha podido crear la carpeta 'Aceptado'");
+                }
             }
 
             File archivoAceptado = new File(carpetaAceptado, documento);
             Files.move(archivo.toPath(), archivoAceptado.toPath());
+            eliminarCarpetaSiVacia(archivo.getParentFile());
             return true;
         }
         return false;
     }
 
+    private void eliminarCarpetaSiVacia(File carpeta) {
+        if (carpeta.isDirectory() && Objects.requireNonNull(carpeta.listFiles()).length == 0) {
+            boolean result = carpeta.delete();
+            if (!result) {
+                logger.error("No se ha podido eliminar la carpeta vacía: {}", carpeta.getAbsolutePath());
+            }
+        }
+    }
 
     public boolean rechazarDocumento(String idProyecto, String ruta, String documento) throws IOException {
         String rutaDocumento = obtenerRutaCarpetaSubida(idProyecto, ruta);
@@ -150,11 +165,17 @@ public class CarpetaServiceImpl implements CarpetaService {
 
             // Crear la carpeta "Rechazado" si no existe
             if (!carpetaRechazado.exists()) {
-                carpetaRechazado.mkdirs();
+                boolean result = carpetaRechazado.mkdirs();
+                if (!result) {
+                    throw new IOException("No se ha podido crear la carpeta 'Rechazado'");
+                }
             }
 
             File archivoRechazado = new File(carpetaRechazado, documento);
             Files.move(archivo.toPath(), archivoRechazado.toPath());
+            // Verificar si la carpeta de origen quedó vacía y eliminarla
+            eliminarCarpetaSiVacia(archivo.getParentFile());
+
             return true;
         }
         return false;
