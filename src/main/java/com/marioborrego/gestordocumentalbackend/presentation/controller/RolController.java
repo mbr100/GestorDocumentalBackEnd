@@ -157,6 +157,11 @@ public class RolController {
         }
     }
 
+    @Operation(summary = "Obtener todos los roles de proyectos")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Roles de proyectos obtenidos correctamente"),
+            @ApiResponse(responseCode = "204", description = "No se encontraron roles de proyectos")
+    })
     @GetMapping()
     public ResponseEntity<List<Rol>> getAllRolesProyectos() {
         List<Rol> roles = rolService.getAllRolesProyectos();
