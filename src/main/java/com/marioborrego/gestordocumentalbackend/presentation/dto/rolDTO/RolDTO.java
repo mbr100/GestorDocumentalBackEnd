@@ -1,6 +1,6 @@
 package com.marioborrego.gestordocumentalbackend.presentation.dto.rolDTO;
 
-import com.marioborrego.gestordocumentalbackend.presentation.dto.empleadoDTO.ListarEmpleadoDTO;
+import com.marioborrego.gestordocumentalbackend.presentation.dto.usuariosDTO.ListarUsuariosDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,5 +13,5 @@ import java.util.List;
 @NoArgsConstructor
 public class RolDTO {
     private String rol;
-    private List<ListarEmpleadoDTO> empleados;
+    private List<ListarUsuariosDTO> empleados;
 }

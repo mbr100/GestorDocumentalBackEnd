@@ -1,7 +1,6 @@
 package com.marioborrego.gestordocumentalbackend.presentation.dto.proyectoDTO;
 
-import com.marioborrego.gestordocumentalbackend.presentation.dto.empleadoDTO.EmpleadoProyectoDTO;
-import com.marioborrego.gestordocumentalbackend.presentation.dto.empleadoDTO.ListarEmpleadoDTO;
+import com.marioborrego.gestordocumentalbackend.presentation.dto.usuariosDTO.UsuarioProyectoDTO;
 import lombok.*;
 
 import java.util.List;
@@ -15,5 +14,5 @@ public class ListarProyectoDTO {
     String titulo;
     int ano;
     String cliente;
-    List<EmpleadoProyectoDTO> empleadoProyecto;
+    List<UsuarioProyectoDTO> empleadoProyecto;
 }

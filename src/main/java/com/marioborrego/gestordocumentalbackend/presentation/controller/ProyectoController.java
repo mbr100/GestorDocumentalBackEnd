@@ -8,6 +8,7 @@ import com.marioborrego.gestordocumentalbackend.presentation.dto.proyectoDTO.Lis
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ import java.util.Map;
 
 @RestController()
 @RequestMapping("api/proyectos")
+@Tag(name = "Proyectos", description = "Gestión de proyectos")
 public class ProyectoController {
     private final ProyectoService proyectoService;
     private final CarpetaService carpetaService;
@@ -55,6 +57,7 @@ public class ProyectoController {
     @GetMapping()
     @RequestMapping(method = RequestMethod.GET, value = "/listarproyectos/{idEmpleado}")
     public ResponseEntity<List<ListarProyectoEmpleadoDTO>> listarProyectosEmpleado(@PathVariable int idEmpleado) {
+
         List<ListarProyectoEmpleadoDTO> proyectos = proyectoService.getProyectosEmpleado(idEmpleado);
         if (proyectos.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(proyectos);

@@ -1,7 +1,7 @@
 package com.marioborrego.gestordocumentalbackend.business.services.implemetation;
 
 import com.marioborrego.gestordocumentalbackend.domain.models.Rol;
-import com.marioborrego.gestordocumentalbackend.presentation.dto.empleadoDTO.ListarEmpleadoDTO;
+import com.marioborrego.gestordocumentalbackend.presentation.dto.usuariosDTO.ListarUsuariosDTO;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.rolDTO.EditarRolDTO;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.rolDTO.RolDTO;
 import com.marioborrego.gestordocumentalbackend.domain.repositories.RolRepository;
@@ -30,9 +30,9 @@ public class RolServiceImpl implements RolService {
         List<Rol> roles = rolRepository.findAll();
         return roles.stream().map(rol -> new RolDTO(
                 rol.getRol(),
-                rol.getEmpleados().stream()
-                        .map(empleado -> new ListarEmpleadoDTO(
-                                empleado.getIdEmpleado(),
+                rol.getUsuarios().stream()
+                        .map(empleado -> new ListarUsuariosDTO(
+                                empleado.getIdUsuario(),
                                 empleado.getNombre(),
                                 empleado.getEmail(),
                                 empleado.getTelefono(),

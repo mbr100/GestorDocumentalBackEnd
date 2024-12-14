@@ -42,6 +42,6 @@ public class NoConformidad {
 
     @ManyToOne
     @JoinColumn(name = "proyecto_id")
-    private Proyectos proyecto;  // Proyecto al que pertenece la no conformidad
+    private Proyecto proyecto;  // Proyecto al que pertenece la no conformidad
 }
 

@@ -22,7 +22,7 @@ public class Rol {
 
     @JsonIgnore
     @OneToMany(mappedBy = "rol") // Relación uno a muchos con Empleado
-    private Set<Empleado> empleados; // Lista de empleados que tienen este rol
+    private Set<Usuario> usuarios; // Lista de empleados que tienen este rol
 
     public Rol(String rol) {
         Rol = rol;

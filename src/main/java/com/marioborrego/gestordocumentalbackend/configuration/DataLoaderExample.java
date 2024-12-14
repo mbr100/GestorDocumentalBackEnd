@@ -1,12 +1,12 @@
 package com.marioborrego.gestordocumentalbackend.configuration;
 
 import com.marioborrego.gestordocumentalbackend.domain.models.Carpeta;
-import com.marioborrego.gestordocumentalbackend.domain.models.Empleado;
-import com.marioborrego.gestordocumentalbackend.domain.models.Proyectos;
+import com.marioborrego.gestordocumentalbackend.domain.models.Usuario;
+import com.marioborrego.gestordocumentalbackend.domain.models.Proyecto;
 import com.marioborrego.gestordocumentalbackend.domain.models.Rol;
 import com.marioborrego.gestordocumentalbackend.domain.repositories.CarpetaRepository;
-import com.marioborrego.gestordocumentalbackend.domain.repositories.EmpleadoRepository;
-import com.marioborrego.gestordocumentalbackend.domain.repositories.ProyectosRepository;
+import com.marioborrego.gestordocumentalbackend.domain.repositories.ProyectoRepository;
+import com.marioborrego.gestordocumentalbackend.domain.repositories.UsuarioRepository;
 import com.marioborrego.gestordocumentalbackend.domain.repositories.RolRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +18,7 @@ import java.util.Set;
 @Configuration
 public class DataLoaderExample {
     @Bean
-    CommandLineRunner initDatabase(RolRepository rolRepository, EmpleadoRepository empleadoRepository, ProyectosRepository proyectosRepository, CarpetaRepository carpetaRepository) {
+    CommandLineRunner initDatabase(RolRepository rolRepository, UsuarioRepository usuarioRepository, ProyectoRepository proyectoRepository, CarpetaRepository carpetaRepository) {
         return _ -> {
             // Crear roles
             Rol gestorProyectos = new Rol("Gestor de proyectos");
@@ -32,47 +32,47 @@ public class DataLoaderExample {
             rolRepository.save(comercial);
             rolRepository.save(administrador);
 
-            Empleado empleado1 = Empleado.builder()
+            Usuario usuario1 = Usuario.builder()
                     .nombre("Mario")
                     .email("mario@ejemplo.com")
                     .telefono("123456789")
                     .rol(gestorProyectos)
                     .build();
-            Empleado empleado11 = Empleado.builder()
+            Usuario usuario11 = Usuario.builder()
                     .nombre("Alma beniro")
                     .email("ew23rf4gt5@gmail.com")
                     .telefono("123456789")
                     .rol(gestorProyectos)
                     .build();
-            Empleado empleado2 = Empleado.builder()
+            Usuario usuario2 = Usuario.builder()
                     .nombre("Alma")
                     .email("alma@ejemplo.com")
                     .telefono("987654321")
                     .rol(gestorExpertos)
                     .build();
 
-            Empleado empleado3 = Empleado.builder()
+            Usuario usuario3 = Usuario.builder()
                     .nombre("Carlos")
                     .email("carlos@ejemplo.com")
                     .telefono("555666777")
                     .rol(comercial)
                     .build();
 
-            Empleado empleado4 = Empleado.builder()
+            Usuario usuario4 = Usuario.builder()
                     .nombre("Pepe")
                     .email("pepe@ejemplo.com")
                     .telefono("555666777")
                     .rol(comercial)
                     .build();
 
-            Empleado empleado5 = Empleado.builder()
+            Usuario usuario5 = Usuario.builder()
                     .nombre("ejemplo1")
                     .email("ejemplo1@ejemplo.com")
                     .telefono("555666777")
                     .rol(comercial)
                     .build();
 
-            Empleado empleado6 = Empleado.builder()
+            Usuario usuario6 = Usuario.builder()
                     .nombre("ejemplo2")
                     .email("ejemplo2@ejemplo.com")
                     .telefono("555666777")
@@ -80,41 +80,41 @@ public class DataLoaderExample {
                     .build();
 
             // Guardar empleados en la base de datos
-            empleadoRepository.save(empleado1);
-            empleadoRepository.save(empleado2);
-            empleadoRepository.save(empleado3);
-            empleadoRepository.save(empleado4);
-            empleadoRepository.save(empleado5);
-            empleadoRepository.save(empleado6);
-            empleadoRepository.save(empleado11);
+            usuarioRepository.save(usuario1);
+            usuarioRepository.save(usuario2);
+            usuarioRepository.save(usuario3);
+            usuarioRepository.save(usuario4);
+            usuarioRepository.save(usuario5);
+            usuarioRepository.save(usuario6);
+            usuarioRepository.save(usuario11);
 
             // Crear un proyecto de prueba
-            Set<Empleado> empleadosProyecto = new HashSet<>();
-            empleadosProyecto.add(empleado1);
-            empleadosProyecto.add(empleado2);
-            empleadosProyecto.add(empleado3);
+            Set<Usuario> empleadosProyecto = new HashSet<>();
+            empleadosProyecto.add(usuario1);
+            empleadosProyecto.add(usuario2);
+            empleadosProyecto.add(usuario3);
 
-            Set<Empleado> empleadosProyecto2 = new HashSet<>();
+            Set<Usuario> empleadosProyecto2 = new HashSet<>();
 
-            Proyectos proyecto1 = Proyectos.builder()
+            Proyecto proyecto1 = Proyecto.builder()
                     .codigo(1)
                     .titulo("Proyecto I+D")
                     .ano(2023)
                     .cliente("Cliente 1")
-                    .empleados(empleadosProyecto)  // Asignar los empleados al proyecto
+                    .usuarios(empleadosProyecto)  // Asignar los empleados al proyecto
                     .build();
 
-            Proyectos proyecto2 = Proyectos.builder()
+            Proyecto proyecto2 = Proyecto.builder()
                     .codigo(2)
                     .titulo("Proyecto I+D+i")
                     .ano(2023)
                     .cliente("Cliente 2")
-                    .empleados(empleadosProyecto2)  // Asignar los empleados al proyecto
+                    .usuarios(empleadosProyecto2)  // Asignar los empleados al proyecto
                     .build();
 
             // Guardar el proyecto en la base de datos
-            proyectosRepository.save(proyecto1);
-            proyectosRepository.save(proyecto2);
+            proyectoRepository.save(proyecto1);
+            proyectoRepository.save(proyecto2);
 
             // Crear carpeta principal para el proyecto
             Carpeta carpetaPrincipal = Carpeta.builder()

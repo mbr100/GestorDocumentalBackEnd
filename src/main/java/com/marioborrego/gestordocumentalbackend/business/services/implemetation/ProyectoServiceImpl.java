@@ -1,13 +1,13 @@
 package com.marioborrego.gestordocumentalbackend.business.services.implemetation;
 
 import com.marioborrego.gestordocumentalbackend.business.services.interfaces.CarpetaService;
-import com.marioborrego.gestordocumentalbackend.business.services.interfaces.EmpleadoService;
+import com.marioborrego.gestordocumentalbackend.business.services.interfaces.UsuarioService;
 import com.marioborrego.gestordocumentalbackend.business.utils.CodeProyect;
-import com.marioborrego.gestordocumentalbackend.domain.models.Empleado;
-import com.marioborrego.gestordocumentalbackend.domain.models.Proyectos;
-import com.marioborrego.gestordocumentalbackend.presentation.dto.empleadoDTO.EmpleadoProyectoDTO;
+import com.marioborrego.gestordocumentalbackend.domain.models.Usuario;
+import com.marioborrego.gestordocumentalbackend.domain.models.Proyecto;
+import com.marioborrego.gestordocumentalbackend.domain.repositories.ProyectoRepository;
+import com.marioborrego.gestordocumentalbackend.presentation.dto.usuariosDTO.UsuarioProyectoDTO;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.proyectoDTO.CrearProyectoDTO;
-import com.marioborrego.gestordocumentalbackend.domain.repositories.ProyectosRepository;
 import com.marioborrego.gestordocumentalbackend.business.services.interfaces.ProyectoService;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.proyectoDTO.ListarProyectoDTO;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.proyectoDTO.ListarProyectoEmpleadoDTO;
@@ -20,49 +20,49 @@ import java.util.*;
 
 @Service
 public class ProyectoServiceImpl implements ProyectoService {
-    private final ProyectosRepository proyectosRepository;
+    private final ProyectoRepository proyectoRepository;
     private final CarpetaService carpetaService;
-    private final EmpleadoService empleadoService;
+    private final UsuarioService usuarioService;
     private static final Logger logger = LoggerFactory.getLogger(ProyectoServiceImpl.class);
 
-    public ProyectoServiceImpl(ProyectosRepository proyectosRepository, CarpetaService carpetaService, EmpleadoService empleadoService ) {
-        this.proyectosRepository = proyectosRepository;
+    public ProyectoServiceImpl(ProyectoRepository ProyectoRepository, CarpetaService carpetaService, UsuarioService usuarioService) {
+        this.proyectoRepository = ProyectoRepository;
         this.carpetaService = carpetaService;
-        this.empleadoService = empleadoService;
+        this.usuarioService = usuarioService;
     }
 
     @Override
     @Transactional
     public Map<String, String> crearProyecto(CrearProyectoDTO proyecto) {
         Map<String, String> respuesta = new HashMap<>();
-        boolean existeProyecto = proyectosRepository.findbytitulo(proyecto.getTitulo());
-        Empleado empleado = empleadoService.getEmpleadoByNombre(proyecto.getNombreEmpleado());
+        boolean existeProyecto = proyectoRepository.findbytitulo(proyecto.getTitulo());
+        Usuario usuario = usuarioService.getEmpleadoByNombre(proyecto.getNombreEmpleado());
         if (existeProyecto) {
             respuesta.put("status", "error");
             respuesta.put("message", "El proyecto ya existe");
             return respuesta;
         }
-        if (empleado == null) {
+        if (usuario == null) {
             respuesta.put("status", "error");
             respuesta.put("message", "El empleado no existe");
             return respuesta;
         }
 
-        if (!empleado.getRol().getRol().equals("Comercial") && !empleado.getRol().getRol().equals("Administrador")) {
+        if (!usuario.getRol().getRol().equals("Comercial") && !usuario.getRol().getRol().equals("Administrador")) {
             respuesta.put("status", "error");
             respuesta.put("message", "El empleado no tiene permisos para crear proyectos");
             return respuesta;
         }
         try {
-            Set<Empleado> emplados = new HashSet<>();
-            emplados.add(empleado);
-            Proyectos nuevoProyecto = Proyectos.builder()
+            Set<Usuario> emplados = new HashSet<>();
+            emplados.add(usuario);
+            Proyecto nuevoProyecto = Proyecto.builder()
                     .titulo(proyecto.getTitulo())
                     .ano(proyecto.getAno())
                     .cliente(proyecto.getCliente())
-                    .empleados(emplados)
+                    .usuarios(emplados)
                     .build();
-            Proyectos proyectoGuardado = proyectosRepository.save(nuevoProyecto);
+            Proyecto proyectoGuardado = proyectoRepository.save(nuevoProyecto);
             carpetaService.createProjectDirectory(proyectoGuardado.getCodigo());
             respuesta.put("status", "success");
             respuesta.put("message", "Proyecto creado con exito");
@@ -76,10 +76,10 @@ public class ProyectoServiceImpl implements ProyectoService {
     @Override
     public List<ListarProyectoDTO> getAllProyectos() {
         try {
-            return proyectosRepository.findAll().stream().map(proyecto -> {
-                List<EmpleadoProyectoDTO> empleadosProyecto = new ArrayList<>();
-                proyecto.getEmpleados().stream().peek(empleado ->
-                        empleadosProyecto.add(EmpleadoProyectoDTO.builder()
+            return proyectoRepository.findAll().stream().map(proyecto -> {
+                List<UsuarioProyectoDTO> empleadosProyecto = new ArrayList<>();
+                proyecto.getUsuarios().stream().peek(empleado ->
+                        empleadosProyecto.add(UsuarioProyectoDTO.builder()
                         .nombre(empleado.getNombre())
                         .email(empleado.getEmail())
                         .telefono(empleado.getTelefono())
@@ -103,26 +103,26 @@ public class ProyectoServiceImpl implements ProyectoService {
     @Override
     public Map<String, String> actualizarProyecto(ListarProyectoDTO proyecto) {
         Map<String, String> respuesta = new HashMap<>();
-        Proyectos proyectoaActualizar = proyectosRepository.findByCodigo(CodeProyect.codeProyectToId(proyecto.getIdProyecto()));
+        Proyecto proyectoaActualizar = proyectoRepository.findByCodigo(CodeProyect.codeProyectToId(proyecto.getIdProyecto()));
         if (proyectoaActualizar == null) {
             respuesta.put("status", "error");
             respuesta.put("message", "El proyecto no existe");
             return respuesta;
         }
         try {
-            Set<Empleado> empleadosProyecto = new HashSet<>();
+            Set<Usuario> empleadosProyecto = new HashSet<>();
             proyecto.getEmpleadoProyecto().forEach(empleado -> {
                 logger.info("Empleado: {}", empleado.getNombre());
-                Empleado empleadoProyecto = empleadoService.getEmpleadoByNombre(empleado.getNombre());
+                Usuario usuarioProyecto = usuarioService.getEmpleadoByNombre(empleado.getNombre());
 
-                empleadosProyecto.add(empleadoProyecto); // Agrega al Set
+                empleadosProyecto.add(usuarioProyecto); // Agrega al Set
             });
 
             proyectoaActualizar.setTitulo(proyecto.getTitulo());
             proyectoaActualizar.setAno(proyecto.getAno());
             proyectoaActualizar.setCliente(proyecto.getCliente());
-            proyectoaActualizar.setEmpleados(empleadosProyecto);
-            proyectosRepository.save(proyectoaActualizar);
+            proyectoaActualizar.setUsuarios(empleadosProyecto);
+            proyectoRepository.save(proyectoaActualizar);
             respuesta.put("status", "success");
             respuesta.put("message", "Proyecto actualizado con exito");
         } catch (Exception e) {
@@ -136,7 +136,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     @Override
     public List<ListarProyectoEmpleadoDTO> getProyectosEmpleado(int idEmpleado) {
         try {
-            return empleadoService.getProyectosEmpleado(idEmpleado).stream().map(proyecto ->
+            return usuarioService.getProyectosEmpleado(idEmpleado).stream().map(proyecto ->
                     ListarProyectoEmpleadoDTO.builder()
                             .idProyecto(CodeProyect.idToCodeProyect(proyecto.getCodigo()))
                             .titulo(proyecto.getTitulo())

@@ -15,7 +15,7 @@ public interface RolRepository extends JpaRepository<Rol, Long> {
     @Query("SELECT r FROM rol r WHERE r.Rol = :rol")
     Rol findByRol(String rol);
 
-    @Query("SELECT COUNT(e) FROM empleado e WHERE e.rol.Rol = :rol")
+    @Query("SELECT COUNT(u) FROM Usuario u WHERE u.rol.Rol = :rol")
     long contarEmpleadosPorRol(@Param("rol") String rol);
 
     @Modifying
