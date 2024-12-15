@@ -36,7 +36,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     public Map<String, String> crearProyecto(CrearProyectoDTO proyecto) {
         Map<String, String> respuesta = new HashMap<>();
         boolean existeProyecto = proyectoRepository.findbytitulo(proyecto.getTitulo());
-        Usuario usuario = usuarioService.getEmpleadoByNombre(proyecto.getNombreEmpleado());
+        Usuario usuario = usuarioService.getUsuarioByNombre(proyecto.getNombreEmpleado());
         if (existeProyecto) {
             respuesta.put("status", "error");
             respuesta.put("message", "El proyecto ya existe");
@@ -113,7 +113,7 @@ public class ProyectoServiceImpl implements ProyectoService {
             Set<Usuario> empleadosProyecto = new HashSet<>();
             proyecto.getEmpleadoProyecto().forEach(empleado -> {
                 logger.info("Empleado: {}", empleado.getNombre());
-                Usuario usuarioProyecto = usuarioService.getEmpleadoByNombre(empleado.getNombre());
+                Usuario usuarioProyecto = usuarioService.getUsuarioByNombre(empleado.getNombre());
 
                 empleadosProyecto.add(usuarioProyecto); // Agrega al Set
             });
@@ -136,7 +136,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     @Override
     public List<ListarProyectoEmpleadoDTO> getProyectosEmpleado(int idEmpleado) {
         try {
-            return usuarioService.getProyectosEmpleado(idEmpleado).stream().map(proyecto ->
+            return usuarioService.getProyectosUsuario(idEmpleado).stream().map(proyecto ->
                     ListarProyectoEmpleadoDTO.builder()
                             .idProyecto(CodeProyect.idToCodeProyect(proyecto.getCodigo()))
                             .titulo(proyecto.getTitulo())

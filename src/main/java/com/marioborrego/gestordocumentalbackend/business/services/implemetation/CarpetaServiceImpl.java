@@ -101,12 +101,10 @@ public class CarpetaServiceImpl implements CarpetaService {
 
         // Verificar si el archivo ya está en la carpeta "Aceptado"
         if (archivo.getParentFile().getName().equalsIgnoreCase("Aceptado")) {
-            // Retornar false si ya está en "Aceptado" para evitar duplicados
             return false;
         }
 
         if (archivo.exists()) {
-            // Obtener la ruta de la carpeta "Aceptado" en el mismo nivel que la carpeta actual
             File carpetaPadre = archivo.getParentFile().getName().equalsIgnoreCase("Rechazado")
                     ? archivo.getParentFile().getParentFile()
                     : archivo.getParentFile();
@@ -120,12 +118,23 @@ public class CarpetaServiceImpl implements CarpetaService {
 
             File archivoAceptado = new File(carpetaAceptado, documento);
             Files.move(archivo.toPath(), archivoAceptado.toPath());
+
+            // Verificar y eliminar carpeta "Rechazado" si está vacía
+            File carpetaRechazado = new File(carpetaPadre, "Rechazado");
+            eliminarCarpetaSiVacia(carpetaRechazado);
+
             return true;
         }
         return false;
     }
 
+    private void eliminarCarpetaSiVacia(File carpeta) {
+        if (carpeta.isDirectory() && Objects.requireNonNull(carpeta.list()).length == 0) {
+            carpeta.delete();
+        }
+    }
 
+    @Override
     public boolean rechazarDocumento(String idProyecto, String ruta, String documento) throws IOException {
         String rutaDocumento = obtenerRutaCarpetaSubida(idProyecto, ruta);
         if (rutaDocumento == null) {
@@ -133,19 +142,17 @@ public class CarpetaServiceImpl implements CarpetaService {
         }
 
         File archivo = new File(rutaDocumento, documento);
+
         // Verificar si el archivo ya está en la carpeta "Rechazado"
         if (archivo.getParentFile().getName().equalsIgnoreCase("Rechazado")) {
-            // Retornar false si ya está en "Aceptado" para evitar duplicados
             return false;
         }
 
         if (archivo.exists()) {
-            // Obtener la ruta de la carpeta que contiene "Rechazado" en el mismo nivel que la carpeta actual
             File carpetaPadre = archivo.getParentFile().getName().equalsIgnoreCase("Aceptado")
                     ? archivo.getParentFile().getParentFile()
                     : archivo.getParentFile();
 
-            // Asegurar que el nombre de la carpeta sea siempre "Rechazado" en minúsculas y sin duplicados
             File carpetaRechazado = new File(carpetaPadre, "Rechazado");
 
             // Crear la carpeta "Rechazado" si no existe
@@ -155,10 +162,16 @@ public class CarpetaServiceImpl implements CarpetaService {
 
             File archivoRechazado = new File(carpetaRechazado, documento);
             Files.move(archivo.toPath(), archivoRechazado.toPath());
+
+            // Verificar y eliminar carpeta "Aceptado" si está vacía
+            File carpetaAceptado = new File(carpetaPadre, "Aceptado");
+            eliminarCarpetaSiVacia(carpetaAceptado);
+
             return true;
         }
         return false;
     }
+
 
 
 

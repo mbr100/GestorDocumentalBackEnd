@@ -11,6 +11,7 @@ import com.marioborrego.gestordocumentalbackend.domain.repositories.RolRepositor
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,7 +19,8 @@ import java.util.Set;
 @Configuration
 public class DataLoaderExample {
     @Bean
-    CommandLineRunner initDatabase(RolRepository rolRepository, UsuarioRepository usuarioRepository, ProyectoRepository proyectoRepository, CarpetaRepository carpetaRepository) {
+    CommandLineRunner initDatabase(RolRepository rolRepository, UsuarioRepository usuarioRepository, ProyectoRepository proyectoRepository, CarpetaRepository carpetaRepository,
+                                   PasswordEncoder passwordEncoder) {
         return _ -> {
             // Crear roles
             Rol gestorProyectos = new Rol("Gestor de proyectos");
@@ -35,18 +37,24 @@ public class DataLoaderExample {
             Usuario usuario1 = Usuario.builder()
                     .nombre("Mario")
                     .email("mario@ejemplo.com")
+                    .password(passwordEncoder.encode("1234"))
+                    .activo(true)
                     .telefono("123456789")
                     .rol(gestorProyectos)
                     .build();
             Usuario usuario11 = Usuario.builder()
                     .nombre("Alma beniro")
                     .email("ew23rf4gt5@gmail.com")
+                    .password(passwordEncoder.encode("1234"))
+                    .activo(true)
                     .telefono("123456789")
                     .rol(gestorProyectos)
                     .build();
             Usuario usuario2 = Usuario.builder()
                     .nombre("Alma")
                     .email("alma@ejemplo.com")
+                    .password(passwordEncoder.encode("1234"))
+                    .activo(true)
                     .telefono("987654321")
                     .rol(gestorExpertos)
                     .build();
@@ -54,6 +62,8 @@ public class DataLoaderExample {
             Usuario usuario3 = Usuario.builder()
                     .nombre("Carlos")
                     .email("carlos@ejemplo.com")
+                    .password(passwordEncoder.encode("1234"))
+                    .activo(true)
                     .telefono("555666777")
                     .rol(comercial)
                     .build();
@@ -61,6 +71,8 @@ public class DataLoaderExample {
             Usuario usuario4 = Usuario.builder()
                     .nombre("Pepe")
                     .email("pepe@ejemplo.com")
+                    .password(passwordEncoder.encode("1234"))
+                    .activo(true)
                     .telefono("555666777")
                     .rol(comercial)
                     .build();
@@ -68,6 +80,8 @@ public class DataLoaderExample {
             Usuario usuario5 = Usuario.builder()
                     .nombre("ejemplo1")
                     .email("ejemplo1@ejemplo.com")
+                    .password(passwordEncoder.encode("1234"))
+                    .activo(true)
                     .telefono("555666777")
                     .rol(comercial)
                     .build();
@@ -75,6 +89,8 @@ public class DataLoaderExample {
             Usuario usuario6 = Usuario.builder()
                     .nombre("ejemplo2")
                     .email("ejemplo2@ejemplo.com")
+                    .password(passwordEncoder.encode("1234"))
+                    .activo(true)
                     .telefono("555666777")
                     .rol(comercial)
                     .build();
@@ -99,6 +115,7 @@ public class DataLoaderExample {
             Proyecto proyecto1 = Proyecto.builder()
                     .codigo(1)
                     .titulo("Proyecto I+D")
+                    .acronimo("PID")
                     .ano(2023)
                     .cliente("Cliente 1")
                     .usuarios(empleadosProyecto)  // Asignar los empleados al proyecto
@@ -107,6 +124,7 @@ public class DataLoaderExample {
             Proyecto proyecto2 = Proyecto.builder()
                     .codigo(2)
                     .titulo("Proyecto I+D+i")
+                    .acronimo("PIDi")
                     .ano(2023)
                     .cliente("Cliente 2")
                     .usuarios(empleadosProyecto2)  // Asignar los empleados al proyecto

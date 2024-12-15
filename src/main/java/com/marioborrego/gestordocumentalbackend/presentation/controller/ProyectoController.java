@@ -39,8 +39,7 @@ public class ProyectoController {
             @ApiResponse(responseCode = "200", description = "Proyectos obtenidos correctamente"),
             @ApiResponse(responseCode = "204", description = "No se encontraron proyectos")
     })
-    @GetMapping()
-    @RequestMapping(method = RequestMethod.GET, value = "/listarTodosProyectos")
+    @GetMapping("/listarTodosProyectos")
     public ResponseEntity<List<ListarProyectoDTO>> listarProyectos() {
         List<ListarProyectoDTO> proyectos = proyectoService.getAllProyectos();
         if (proyectos.isEmpty()) {
@@ -54,8 +53,7 @@ public class ProyectoController {
             @ApiResponse(responseCode = "200", description = "Proyectos obtenidos correctamente"),
             @ApiResponse(responseCode = "204", description = "No se encontraron proyectos")
     })
-    @GetMapping()
-    @RequestMapping(method = RequestMethod.GET, value = "/listarproyectos/{idEmpleado}")
+    @GetMapping("/listarproyectos/{idEmpleado}")
     public ResponseEntity<List<ListarProyectoEmpleadoDTO>> listarProyectosEmpleado(@PathVariable int idEmpleado) {
 
         List<ListarProyectoEmpleadoDTO> proyectos = proyectoService.getProyectosEmpleado(idEmpleado);
@@ -99,8 +97,7 @@ public class ProyectoController {
             @ApiResponse(responseCode = "200", description = "Proyecto actualizado correctamente"),
             @ApiResponse(responseCode = "400", description = "Datos del proyecto incorrectos")
     })
-    @PutMapping()
-    @RequestMapping(method = RequestMethod.PUT, value = "/actualizarProyecto")
+    @PutMapping("/actualizarProyecto")
     public ResponseEntity<Map<String, String>> actualizarProyecto(@RequestBody ListarProyectoDTO proyecto) {
 
         Map<String, String> response = new HashMap<>();
@@ -129,8 +126,7 @@ public class ProyectoController {
             @ApiResponse(responseCode = "200", description = "Documentos obtenidos correctamente"),
             @ApiResponse(responseCode = "204", description = "No se encontraron documentos")
     })
-    @GetMapping()
-    @RequestMapping(method = RequestMethod.GET, value = "proyecto/{id}/documentos")
+    @GetMapping("proyecto/{id}/documentos")
     public ResponseEntity<Map<String,Object>> listarDocumentosProyecto(@PathVariable String id) throws IOException {
         Map<String, Object> response = new HashMap<>();
         HttpStatus status;
