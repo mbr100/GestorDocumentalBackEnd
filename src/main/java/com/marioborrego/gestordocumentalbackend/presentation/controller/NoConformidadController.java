@@ -68,6 +68,7 @@ public class NoConformidadController {
     })
     @GetMapping("/cerrarPuntoNc/{idPuntoNc}")
     public ResponseEntity<?> cerrarPuntoNc(@PathVariable() Long idPuntoNc) {
+        log.info("CerrarPuntoNc: {}", idPuntoNc);
         if (noConformidadService.cerrarPuntoNc(idPuntoNc)) {
             return ResponseEntity.ok().build();
         }

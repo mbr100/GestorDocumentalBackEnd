@@ -5,6 +5,7 @@ import com.marioborrego.gestordocumentalbackend.business.exceptions.CrearUsuario
 import com.marioborrego.gestordocumentalbackend.business.exceptions.EliminarUsuarioExceptions;
 import com.marioborrego.gestordocumentalbackend.business.exceptions.InternalServerError;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.responseDTO.ResponseDTO;
+import com.marioborrego.gestordocumentalbackend.presentation.exceptions.SubirDocumentoExceptions;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -36,6 +37,13 @@ public class ExceptionsController {
 
     @ExceptionHandler(ActualizarUsuarioExceptions.class)
     public ResponseEntity<ResponseDTO> actualizarUsuarioException(ActualizarUsuarioExceptions e) {
+        String status = "error";
+        String message = e.getMessage();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(status, message));
+    }
+
+    @ExceptionHandler(SubirDocumentoExceptions.class)
+    public ResponseEntity<ResponseDTO> subirDocumentoExceptions(SubirDocumentoExceptions e) {
         String status = "error";
         String message = e.getMessage();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(status, message));

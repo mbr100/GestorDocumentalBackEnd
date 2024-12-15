@@ -4,12 +4,12 @@ import com.marioborrego.gestordocumentalbackend.business.services.interfaces.NoC
 import com.marioborrego.gestordocumentalbackend.business.utils.CodeProyect;
 import com.marioborrego.gestordocumentalbackend.domain.models.ContenidoPuntoNoConformidad;
 import com.marioborrego.gestordocumentalbackend.domain.models.NoConformidad;
-import com.marioborrego.gestordocumentalbackend.domain.models.Proyectos;
+import com.marioborrego.gestordocumentalbackend.domain.models.Proyecto;
 import com.marioborrego.gestordocumentalbackend.domain.models.PuntosNoConformidad;
 import com.marioborrego.gestordocumentalbackend.domain.models.enums.Estado;
 import com.marioborrego.gestordocumentalbackend.domain.repositories.ContenidoPuntoNoConformidadRepository;
 import com.marioborrego.gestordocumentalbackend.domain.repositories.NoConformidadRepository;
-import com.marioborrego.gestordocumentalbackend.domain.repositories.ProyectosRepository;
+import com.marioborrego.gestordocumentalbackend.domain.repositories.ProyectoRepository;
 import com.marioborrego.gestordocumentalbackend.domain.repositories.PuntosNoConformidadRepository;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.ncsDTO.CrearNoConformidadDto;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.ncsDTO.NuevoPuntoNcDTO;
@@ -25,17 +25,17 @@ import java.util.Set;
 @Service
 public class NoConformidadServiceImpl implements NoConformidadService {
     private final NoConformidadRepository noConformidadRepository;
-    private final ProyectosRepository proyectosRepository;
+    private final ProyectoRepository proyectoRepository;
     private final PuntosNoConformidadRepository puntosNoConformidadRepository;
     private final ContenidoPuntoNoConformidadRepository contenidoPuntoNoConformidadRepository;
     private final Logger log = LoggerFactory.getLogger(NoConformidadServiceImpl.class);
 
     public NoConformidadServiceImpl(NoConformidadRepository noConformidadRepository, PuntosNoConformidadRepository puntosNoConformidadRepository, ContenidoPuntoNoConformidadRepository contenidoPuntoNoConformidadRepository,
-                                    ProyectosRepository proyectosRepository) {
+                                    ProyectoRepository proyectoRepository) {
         this.contenidoPuntoNoConformidadRepository = contenidoPuntoNoConformidadRepository;
         this.puntosNoConformidadRepository = puntosNoConformidadRepository;
         this.noConformidadRepository = noConformidadRepository;
-        this.proyectosRepository = proyectosRepository;
+        this.proyectoRepository = proyectoRepository;
     }
 
     @Override
@@ -73,33 +73,31 @@ public class NoConformidadServiceImpl implements NoConformidadService {
     @Override
     public boolean cerrarPuntoNc(Long idPuntoNc) {
         try {
-            PuntosNoConformidad puntosNoConformidad = puntosNoConformidadRepository.findById(idPuntoNc).orElse(null);
-            if (puntosNoConformidad == null) {
+            PuntosNoConformidad puntoNC = puntosNoConformidadRepository.findById(idPuntoNc).orElse(null);
+            if (puntoNC == null) {
                 return false;
             }
-
             // Obtener los puntos de la no conformidad asociada
-            List<PuntosNoConformidad> puntosNC = puntosNoConformidadRepository.findByNoConformidadId(puntosNoConformidad.getNoConformidad().getId());
+            List<PuntosNoConformidad> puntosNC = puntosNoConformidadRepository.findByNoConformidadId(puntoNC.getNoConformidad().getId());
 
             // Verificar si el número de puntos es impar (falta una respuesta)
-            if (puntosNC.size() % 2 != 0) {
+            if (puntoNC.getContenidos().size() % 2 != 0) {
                 return false;  // No se puede cerrar si el número de puntos no es par
             }
 
             // Establecer el estado del punto de no conformidad a CERRADA
-            puntosNoConformidad.setEstado(Estado.CERRADA);
-            puntosNoConformidadRepository.save(puntosNoConformidad);
+            puntoNC.setEstado(Estado.CERRADA);
+            puntosNoConformidadRepository.save(puntoNC);
 
             // Verificar si todos los puntos de la no conformidad están cerrados
             boolean todosCerrados = puntosNC.stream().allMatch(punto -> punto.getEstado() == Estado.CERRADA);
 
             if (todosCerrados) {
                 // Si todos los puntos están cerrados, cerrar la no conformidad
-                NoConformidad noConformidad = puntosNoConformidad.getNoConformidad();
+                NoConformidad noConformidad = puntoNC.getNoConformidad();
                 noConformidad.setEstado(Estado.CERRADA);
                 noConformidadRepository.save(noConformidad);
             }
-
             return true;
         } catch (Exception e) {
             log.error("Error al cerrar el punto de no conformidad", e);
@@ -132,7 +130,7 @@ public class NoConformidadServiceImpl implements NoConformidadService {
     @Override
     public boolean crearNoConformidad(CrearNoConformidadDto crearNoConformidadDto) {
         try {
-            Proyectos proyecto = proyectosRepository.findByCodigo(CodeProyect.codeProyectToId(crearNoConformidadDto.getIdProyecto()));
+            Proyecto proyecto = proyectoRepository.findByCodigo(CodeProyect.codeProyectToId(crearNoConformidadDto.getIdProyecto()));
             if (proyecto == null) {
                 return false;
             }
@@ -145,7 +143,7 @@ public class NoConformidadServiceImpl implements NoConformidadService {
             Set<NoConformidad> NCs = proyecto.getNoConformidad();
             NCs.add(noConformidad);
             proyecto.setNoConformidad(NCs);
-            proyectosRepository.save(proyecto);
+            proyectoRepository.save(proyecto);
             return true;
         } catch (Exception e) {
             log.error("Error al guardar la no conformidad", e);

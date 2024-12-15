@@ -55,7 +55,6 @@ public class ProyectoController {
     })
     @GetMapping("/listarproyectos/{idEmpleado}")
     public ResponseEntity<List<ListarProyectoEmpleadoDTO>> listarProyectosEmpleado(@PathVariable int idEmpleado) {
-
         List<ListarProyectoEmpleadoDTO> proyectos = proyectoService.getProyectosEmpleado(idEmpleado);
         if (proyectos.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(proyectos);
@@ -72,7 +71,7 @@ public class ProyectoController {
     public ResponseEntity<Map<String, String>> crearProyecto(@RequestBody CrearProyectoDTO proyecto) {
         Map<String, String> response = new HashMap<>();
         HttpStatus status;
-        logger.info("Creando proyecto: " + proyecto.getNombreEmpleado());
+        logger.info("Creando proyecto: {}", proyecto.getNombreEmpleado());
         if (proyecto.getTitulo() == null || proyecto.getTitulo().isEmpty()) {
             response.put("status", "error");
             response.put("message", "El titulo del proyecto no puede estar vacio");

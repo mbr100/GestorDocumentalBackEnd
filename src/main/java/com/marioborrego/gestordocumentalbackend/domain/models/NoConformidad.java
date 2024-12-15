@@ -1,12 +1,10 @@
 package com.marioborrego.gestordocumentalbackend.domain.models;
 
 import com.marioborrego.gestordocumentalbackend.domain.models.enums.Estado;
-import com.marioborrego.gestordocumentalbackend.domain.models.enums.Responsable;
 import com.marioborrego.gestordocumentalbackend.domain.models.enums.TipoNc;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "no_conformidad")
@@ -25,7 +23,7 @@ public class NoConformidad {
 
     @ManyToOne
     @JoinColumn(name = "proyecto_id")
-    private Proyectos proyecto;
+    private Proyecto proyecto;
 
     @OneToMany(mappedBy = "noConformidad", cascade = CascadeType.ALL)
     private List<PuntosNoConformidad> puntosNoConformidades;

@@ -16,6 +16,9 @@ spring:
             hibernate:
                 format_sql: true
         open-in-view: true
+security:
+    jwt:
+        expiration-in-minutes: 60
 #logging:
 #    level:
 #      org.springframework.integration: DEBUG

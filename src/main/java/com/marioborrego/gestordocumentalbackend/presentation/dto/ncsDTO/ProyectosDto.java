@@ -1,6 +1,6 @@
 package com.marioborrego.gestordocumentalbackend.presentation.dto.ncsDTO;
 
-import com.marioborrego.gestordocumentalbackend.domain.models.Proyectos;
+import com.marioborrego.gestordocumentalbackend.domain.models.Proyecto;
 import lombok.*;
 
 @Builder
@@ -14,7 +14,7 @@ public class ProyectosDto {
     int ano;
     String cliente;
 
-    public ProyectosDto(Proyectos proyecto) {
+    public ProyectosDto(Proyecto proyecto) {
         this.codigo = proyecto.getCodigo();
         this.titulo = proyecto.getTitulo();
         this.ano = proyecto.getAno();

@@ -1,24 +1,24 @@
 package com.marioborrego.gestordocumentalbackend.configuration;
 
-import com.marioborrego.gestordocumentalbackend.domain.models.Carpeta;
-import com.marioborrego.gestordocumentalbackend.domain.models.Empleado;
-import com.marioborrego.gestordocumentalbackend.domain.models.Proyectos;
-import com.marioborrego.gestordocumentalbackend.domain.models.Rol;
-import com.marioborrego.gestordocumentalbackend.domain.repositories.CarpetaRepository;
-import com.marioborrego.gestordocumentalbackend.domain.repositories.EmpleadoRepository;
-import com.marioborrego.gestordocumentalbackend.domain.repositories.ProyectosRepository;
-import com.marioborrego.gestordocumentalbackend.domain.repositories.RolRepository;
+import com.marioborrego.gestordocumentalbackend.business.services.interfaces.CarpetaService;
+import com.marioborrego.gestordocumentalbackend.domain.models.*;
+
+import com.marioborrego.gestordocumentalbackend.domain.models.enums.Estado;
+import com.marioborrego.gestordocumentalbackend.domain.models.enums.Responsable;
+import com.marioborrego.gestordocumentalbackend.domain.models.enums.TipoNc;
+import com.marioborrego.gestordocumentalbackend.domain.repositories.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Configuration
 public class DataLoaderExample {
     @Bean
-    CommandLineRunner initDatabase(RolRepository rolRepository, EmpleadoRepository empleadoRepository, ProyectosRepository proyectosRepository, CarpetaRepository carpetaRepository) {
+    CommandLineRunner initDatabase(RolRepository rolRepository, UsuarioRepository usuarioRepository, ProyectoRepository proyectoRepository, CarpetaRepository carpetaRepository,
+                                   PasswordEncoder passwordEncoder, CarpetaService carpetaService, NoConformidadRepository noConformidadRepository) {
         return _ -> {
             // Crear roles
             Rol gestorProyectos = new Rol("Gestor de proyectos");

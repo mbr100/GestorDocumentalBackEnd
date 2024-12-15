@@ -1,6 +1,8 @@
 package com.marioborrego.gestordocumentalbackend.presentation.controller;
 
+import com.marioborrego.gestordocumentalbackend.business.exceptions.InternalServerError;
 import com.marioborrego.gestordocumentalbackend.business.services.interfaces.CarpetaService;
+import com.marioborrego.gestordocumentalbackend.presentation.exceptions.SubirDocumentoExceptions;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -33,36 +35,25 @@ public class DocumentosController {
             @ApiResponse(responseCode = "400", description = "Error al subir el documento")
     })
     @PutMapping("/{idProyecto}")
-    public ResponseEntity<?> subirDocumentoProyecto(@PathVariable String idProyecto, @RequestParam("carpeta") String carpeta, @RequestParam("documento") MultipartFile documento) throws IOException {
+    public ResponseEntity<Map<String, String>> subirDocumentoProyecto(@PathVariable String idProyecto, @RequestParam("carpeta") String carpeta, @RequestParam("documento") MultipartFile documento) throws IOException {
         Map<String, String> response = new HashMap<>();
         HttpStatus status ;
         if (idProyecto.isEmpty()){
-            response.put("message", "El id del proyecto no puede estar vacío");
-            response.put("status", "error");
-            status = HttpStatus.BAD_REQUEST;
-            return ResponseEntity.status(status).body(response);
+            throw new SubirDocumentoExceptions("El id del proyecto no puede estar vacío");
         } else if (carpeta.isEmpty()){
-            response.put("message", "La carpeta no puede estar vacía");
-            response.put("status", "error");
-            status = HttpStatus.BAD_REQUEST;
-            return ResponseEntity.status(status).body(response);
+            throw new SubirDocumentoExceptions("La carpeta no puede estar vacía");
         } else if (documento.isEmpty()){
-            response.put("message", "El documento no puede estar vacío");
-            response.put("status", "error");
-            status = HttpStatus.BAD_REQUEST;
-            return ResponseEntity.status(status).body(response);
+            throw new SubirDocumentoExceptions("El documento no puede estar vacío");
         }
         boolean result = carpetaService.guardarDocumentoProyecto(idProyecto, carpeta, documento);
         if (result){
             response.put("message", "Documento subido correctamente");
             response.put("status", "success");
             status = HttpStatus.OK;
+            return ResponseEntity.status(status).body(response);
         } else {
-            response.put("message", "Error al subir el documento");
-            response.put("status", "error");
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            throw new InternalServerError("Error al subir el documento");
         }
-        return ResponseEntity.status(status).body(response);
     }
 
     @Operation(summary = "Subir documento a carpeta", description = "Subir documento a carpeta")
@@ -76,34 +67,24 @@ public class DocumentosController {
         Map<String, String> response = new HashMap<>();
         HttpStatus status;
         if (idProyecto.isEmpty()){
-            response.put("message", "El id del proyecto no puede estar vacío");
-            response.put("status", "error");
-            status = HttpStatus.BAD_REQUEST;
-            return ResponseEntity.status(status).body(response);
+            throw new SubirDocumentoExceptions("El id del proyecto no puede estar vacío");
         }
         if (ruta.isEmpty()){
-            response.put("message", "La ruta no puede estar vacía");
-            response.put("status", "error");
-            status = HttpStatus.BAD_REQUEST;
-            return ResponseEntity.status(status).body(response);
+            throw new SubirDocumentoExceptions("La ruta no puede estar vacía");
         }
         if (documento.isEmpty()){
-            response.put("message", "El documento no puede estar vacío");
-            response.put("status", "error");
-            status = HttpStatus.BAD_REQUEST;
-            return ResponseEntity.status(status).body(response);
+            throw new SubirDocumentoExceptions("El documento no puede estar vacío");
         }
         boolean result = carpetaService.aceptarDocumento(idProyecto, ruta, documento);
         if (result){
             response.put("message", "Documento aceptado correctamente");
             response.put("status", "success");
             status = HttpStatus.OK;
+            return ResponseEntity.status(status).body(response);
+
         } else {
-            response.put("message", "Error al aceptar el documento");
-            response.put("status", "error");
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            throw new InternalServerError("Error al aceptar el documento");
         }
-        return ResponseEntity.status(status).body(response);
     }
 
     @Operation(summary = "Rechazar documento", description = "Rechazar documento")
@@ -117,33 +98,22 @@ public class DocumentosController {
         Map<String, String> response = new HashMap<>();
         HttpStatus status;
         if (idProyecto.isEmpty()){
-            response.put("message", "El id del proyecto no puede estar vacío");
-            response.put("status", "error");
-            status = HttpStatus.BAD_REQUEST;
-            return ResponseEntity.status(status).body(response);
+           throw new SubirDocumentoExceptions("El id del proyecto no puede estar vacío");
         }
         if (ruta.isEmpty()){
-            response.put("message", "La ruta no puede estar vacía");
-            response.put("status", "error");
-            status = HttpStatus.BAD_REQUEST;
-            return ResponseEntity.status(status).body(response);
+            throw new SubirDocumentoExceptions("La ruta no puede estar vacía");
         }
         if (documento.isEmpty()){
-            response.put("message", "El documento no puede estar vacío");
-            response.put("status", "error");
-            status = HttpStatus.BAD_REQUEST;
-            return ResponseEntity.status(status).body(response);
+            throw new SubirDocumentoExceptions("El documento no puede estar vacío");
         }
         boolean result = carpetaService.rechazarDocumento(idProyecto, ruta, documento);
         if (result){
             response.put("message", "Documento aceptado correctamente");
             response.put("status", "success");
             status = HttpStatus.OK;
+            return ResponseEntity.status(status).body(response);
         } else {
-            response.put("message", "Error al aceptar el documento");
-            response.put("status", "error");
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            throw new InternalServerError("Error al rechazar el documento");
         }
-        return ResponseEntity.status(status).body(response);
     }
 }

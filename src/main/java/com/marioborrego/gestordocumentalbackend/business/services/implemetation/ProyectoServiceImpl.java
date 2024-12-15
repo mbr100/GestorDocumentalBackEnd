@@ -1,16 +1,17 @@
 package com.marioborrego.gestordocumentalbackend.business.services.implemetation;
 
 import com.marioborrego.gestordocumentalbackend.business.services.interfaces.CarpetaService;
-import com.marioborrego.gestordocumentalbackend.business.services.interfaces.EmpleadoService;
+import com.marioborrego.gestordocumentalbackend.business.services.interfaces.UsuarioService;
 import com.marioborrego.gestordocumentalbackend.business.utils.CodeProyect;
-import com.marioborrego.gestordocumentalbackend.domain.models.Empleado;
-import com.marioborrego.gestordocumentalbackend.domain.models.Proyectos;
-import com.marioborrego.gestordocumentalbackend.presentation.dto.empleadoDTO.EmpleadoProyectoDTO;
+
+import com.marioborrego.gestordocumentalbackend.domain.models.Proyecto;
+import com.marioborrego.gestordocumentalbackend.domain.models.Usuario;
+import com.marioborrego.gestordocumentalbackend.domain.repositories.ProyectoRepository;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.proyectoDTO.CrearProyectoDTO;
-import com.marioborrego.gestordocumentalbackend.domain.repositories.ProyectosRepository;
 import com.marioborrego.gestordocumentalbackend.business.services.interfaces.ProyectoService;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.proyectoDTO.ListarProyectoDTO;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.proyectoDTO.ListarProyectoEmpleadoDTO;
+import com.marioborrego.gestordocumentalbackend.presentation.dto.usuariosDTO.UsuarioProyectoDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -147,6 +148,11 @@ public class ProyectoServiceImpl implements ProyectoService {
             logger.error("Error al obtener los proyectos", e);
             return List.of();
         }
+    }
+
+    @Override
+    public boolean existeProyecto(String id) {
+        return proyectoRepository.existsByCodigo(CodeProyect.codeProyectToId(id));
     }
 
 
