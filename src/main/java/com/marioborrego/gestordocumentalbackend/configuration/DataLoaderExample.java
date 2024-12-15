@@ -1,17 +1,16 @@
 package com.marioborrego.gestordocumentalbackend.configuration;
 
 import com.marioborrego.gestordocumentalbackend.domain.models.Carpeta;
-import com.marioborrego.gestordocumentalbackend.domain.models.Usuario;
-import com.marioborrego.gestordocumentalbackend.domain.models.Proyecto;
+import com.marioborrego.gestordocumentalbackend.domain.models.Empleado;
+import com.marioborrego.gestordocumentalbackend.domain.models.Proyectos;
 import com.marioborrego.gestordocumentalbackend.domain.models.Rol;
 import com.marioborrego.gestordocumentalbackend.domain.repositories.CarpetaRepository;
-import com.marioborrego.gestordocumentalbackend.domain.repositories.ProyectoRepository;
-import com.marioborrego.gestordocumentalbackend.domain.repositories.UsuarioRepository;
+import com.marioborrego.gestordocumentalbackend.domain.repositories.EmpleadoRepository;
+import com.marioborrego.gestordocumentalbackend.domain.repositories.ProyectosRepository;
 import com.marioborrego.gestordocumentalbackend.domain.repositories.RolRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -19,8 +18,7 @@ import java.util.Set;
 @Configuration
 public class DataLoaderExample {
     @Bean
-    CommandLineRunner initDatabase(RolRepository rolRepository, UsuarioRepository usuarioRepository, ProyectoRepository proyectoRepository, CarpetaRepository carpetaRepository,
-                                   PasswordEncoder passwordEncoder) {
+    CommandLineRunner initDatabase(RolRepository rolRepository, EmpleadoRepository empleadoRepository, ProyectosRepository proyectosRepository, CarpetaRepository carpetaRepository) {
         return _ -> {
             // Crear roles
             Rol gestorProyectos = new Rol("Gestor de proyectos");
@@ -241,6 +239,144 @@ public class DataLoaderExample {
             carpetaRepository.save(imv);
             carpetaRepository.save(contable);
             carpetaRepository.save(gestorProyecto);
+
+            carpetaService.createProjectDirectory(proyecto1.getCodigo());
+            carpetaService.createProjectDirectory(proyecto2.getCodigo());
+
+
+            // Crear no conformidades
+            ContenidoPuntoNoConformidad contenidoNC1_1 = ContenidoPuntoNoConformidad.builder()
+                    .contenido("No se localizan los documentos")
+                    .fecha(new Date(1693526400000L))
+                    .build();
+            ContenidoPuntoNoConformidad contenidoNC1_2 = ContenidoPuntoNoConformidad.builder()
+                    .contenido("Se aportan documentos")
+                    .fecha(new Date(1693612800000L))
+                    .build();
+            ContenidoPuntoNoConformidad contenidoNC1_3 = ContenidoPuntoNoConformidad.builder()
+                    .contenido("Los documentos aportados no cumplen los requisitos minimos")
+                    .fecha(new Date(1693699200000L))
+                    .build();
+            List<ContenidoPuntoNoConformidad> contenidosNC1 = new ArrayList<>();
+            contenidosNC1.add(contenidoNC1_1);
+            contenidosNC1.add(contenidoNC1_2);
+            contenidosNC1.add(contenidoNC1_3);
+
+            PuntosNoConformidad nc1_1 = PuntosNoConformidad.builder()
+                    .contenidos(contenidosNC1)
+                    .fecha(new Date())
+                    .estado(Estado.ABIERTA)
+                    .responsable(Responsable.GestorProyecto)
+                    .build();
+
+            List<PuntosNoConformidad> noConformidades1 = new ArrayList<>();
+            noConformidades1.add(nc1_1);
+
+            NoConformidad nc1 = NoConformidad.builder()
+                    .tipoNc(TipoNc.GP)
+                    .proyecto(proyecto1)
+                    .version(1)
+                    .puntosNoConformidades(noConformidades1)
+                    .build();
+
+            nc1_1.setNoConformidad(nc1);
+            nc1.setEstado(Estado.ABIERTA);
+            contenidoNC1_1.setPuntosNoConformidad(nc1_1);
+            contenidoNC1_2.setPuntosNoConformidad(nc1_1);
+            contenidoNC1_3.setPuntosNoConformidad(nc1_1);
+            noConformidadRepository.save(nc1);
+
+            // Crear contenidos para NoConformidad 1 de Proyecto 1
+            ContenidoPuntoNoConformidad contenidoNC2_1 = ContenidoPuntoNoConformidad.builder()
+                    .contenido("No se localizan los documentos")
+                    .fecha(new Date(1693785600000L))
+                    .build();
+            ContenidoPuntoNoConformidad contenidoNC2_2 = ContenidoPuntoNoConformidad.builder()
+                    .contenido("Se aportan documentos")
+                    .fecha(new Date(1693872000000L))
+                    .build();
+            ContenidoPuntoNoConformidad contenidoNC2_3 = ContenidoPuntoNoConformidad.builder()
+                    .contenido("Los documentos aportados no cumplen los requisitos mínimos")
+                    .fecha(new Date(1693958400000L))
+                    .build();
+            List<ContenidoPuntoNoConformidad> contenidosNC2 = Arrays.asList(contenidoNC2_1, contenidoNC2_2, contenidoNC2_3);
+
+            PuntosNoConformidad nc2_1 = PuntosNoConformidad.builder()
+                    .contenidos(contenidosNC2)
+                    .fecha(new Date())
+                    .estado(Estado.ABIERTA)
+                    .responsable(Responsable.GestorProyecto)
+                    .build();
+
+            contenidoNC2_1.setPuntosNoConformidad(nc2_1);
+            contenidoNC2_2.setPuntosNoConformidad(nc2_1);
+            contenidoNC2_3.setPuntosNoConformidad(nc2_1);
+
+            // Crear TERCERA NoConformidad para Proyecto 1
+            ContenidoPuntoNoConformidad contenidoNC3_1 = ContenidoPuntoNoConformidad.builder()
+                    .contenido("Los documentos están incompletos")
+                    .fecha(new Date(1694044800000L))
+                    .build();
+            ContenidoPuntoNoConformidad contenidoNC3_2 = ContenidoPuntoNoConformidad.builder()
+                    .contenido("Falta el anexo requerido")
+                    .fecha(new Date(1694044800000L))
+                    .build();
+            List<ContenidoPuntoNoConformidad> contenidosNC3 = Arrays.asList(contenidoNC3_1, contenidoNC3_2);
+
+            PuntosNoConformidad nc3_1 = PuntosNoConformidad.builder()
+                    .contenidos(contenidosNC3)
+                    .fecha(new Date())
+                    .estado(Estado.ABIERTA)
+                    .responsable(Responsable.Comite)
+                    .build();
+
+            contenidoNC3_1.setPuntosNoConformidad(nc3_1);
+            contenidoNC3_2.setPuntosNoConformidad(nc3_1);
+
+            List<PuntosNoConformidad> noConformidades3 = Arrays.asList(nc2_1, nc3_1);
+
+            NoConformidad noConformidadProyecto1 = NoConformidad.builder()
+                    .tipoNc(TipoNc.GP)
+                    .proyecto(proyecto1)
+                    .version(1)
+                    .puntosNoConformidades(noConformidades3)
+                    .estado(Estado.ABIERTA)
+                    .build();
+
+            nc2_1.setNoConformidad(noConformidadProyecto1);
+            nc3_1.setNoConformidad(noConformidadProyecto1);
+            noConformidadRepository.save(noConformidadProyecto1);
+
+        // Crear cuatro NoConformidades para Proyecto 2
+            for (int i = 1; i <= 4; i++) {
+                List<ContenidoPuntoNoConformidad> contenidosProyecto2 = new ArrayList<>();
+                for (int j = 1; j <= 2; j++) {
+                    ContenidoPuntoNoConformidad contenido = ContenidoPuntoNoConformidad.builder()
+                            .contenido("Contenido de No Conformidad " + i + ", elemento " + j)
+                            .fecha(new Date(1694044800000L + (1000L*j)))
+                            .build();
+                    contenidosProyecto2.add(contenido);
+                }
+                PuntosNoConformidad noConformidadesProyecto2 = PuntosNoConformidad.builder()
+                        .contenidos(contenidosProyecto2)
+                        .fecha(new Date())
+                        .estado(i % 2 == 0 ? Estado.CERRADA : Estado.ABIERTA)
+                        .responsable(Responsable.ExpertoTecnico)
+                        .build();
+
+                contenidosProyecto2.forEach(contenido -> contenido.setPuntosNoConformidad(noConformidadesProyecto2));
+
+                NoConformidad noConformidadProyecto2 = NoConformidad.builder()
+                        .tipoNc(TipoNc.Experto4D)
+                        .proyecto(proyecto2)
+                        .version(i)
+                        .estado(Estado.CERRADA)
+                        .puntosNoConformidades(Collections.singletonList(noConformidadesProyecto2))
+                        .build();
+
+                noConformidadesProyecto2.setNoConformidad(noConformidadProyecto2);
+                noConformidadRepository.save(noConformidadProyecto2);
+            }
         };
     }
 }

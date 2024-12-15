@@ -23,25 +23,14 @@ public class NoConformidad {
     @Enumerated(EnumType.STRING)
     private TipoNc tipoNc;
 
-    private String Contenido;
-
-    private Date fecha;
-
-    @Enumerated(EnumType.STRING)
-    private Estado estado;
-
-    @Enumerated(EnumType.STRING)
-    private Responsable responsable;
-
-    @OneToOne(mappedBy = "noConformidadPadre")  // Corregido el nombre del mappedBy
-    private NoConformidad noConformidadHija;
-
-    @ManyToOne
-    @JoinColumn(name = "padre_id")
-    private NoConformidad noConformidadPadre;
-
     @ManyToOne
     @JoinColumn(name = "proyecto_id")
-    private Proyecto proyecto;  // Proyecto al que pertenece la no conformidad
-}
+    private Proyectos proyecto;
 
+    @OneToMany(mappedBy = "noConformidad", cascade = CascadeType.ALL)
+    private List<PuntosNoConformidad> puntosNoConformidades;
+
+    private Estado estado;
+
+    int version;
+}

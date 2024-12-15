@@ -1,13 +1,13 @@
 package com.marioborrego.gestordocumentalbackend.business.services.implemetation;
 
 import com.marioborrego.gestordocumentalbackend.business.services.interfaces.CarpetaService;
-import com.marioborrego.gestordocumentalbackend.business.services.interfaces.UsuarioService;
+import com.marioborrego.gestordocumentalbackend.business.services.interfaces.EmpleadoService;
 import com.marioborrego.gestordocumentalbackend.business.utils.CodeProyect;
-import com.marioborrego.gestordocumentalbackend.domain.models.Usuario;
-import com.marioborrego.gestordocumentalbackend.domain.models.Proyecto;
-import com.marioborrego.gestordocumentalbackend.domain.repositories.ProyectoRepository;
-import com.marioborrego.gestordocumentalbackend.presentation.dto.usuariosDTO.UsuarioProyectoDTO;
+import com.marioborrego.gestordocumentalbackend.domain.models.Empleado;
+import com.marioborrego.gestordocumentalbackend.domain.models.Proyectos;
+import com.marioborrego.gestordocumentalbackend.presentation.dto.empleadoDTO.EmpleadoProyectoDTO;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.proyectoDTO.CrearProyectoDTO;
+import com.marioborrego.gestordocumentalbackend.domain.repositories.ProyectosRepository;
 import com.marioborrego.gestordocumentalbackend.business.services.interfaces.ProyectoService;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.proyectoDTO.ListarProyectoDTO;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.proyectoDTO.ListarProyectoEmpleadoDTO;

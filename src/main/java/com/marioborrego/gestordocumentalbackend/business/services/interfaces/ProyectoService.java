@@ -14,4 +14,5 @@ public interface ProyectoService {
     List<ListarProyectoDTO> getAllProyectos();
     Map<String, String> actualizarProyecto(ListarProyectoDTO proyecto);
     List<ListarProyectoEmpleadoDTO> getProyectosEmpleado(int idEmpleado);
+    boolean existeProyecto(String id);
 }

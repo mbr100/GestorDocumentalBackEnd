@@ -1,5 +1,6 @@
 package com.marioborrego.gestordocumentalbackend.domain.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,6 +30,7 @@ public class Proyecto {
     @Column(name = "cliente")
     private String cliente;
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "proyecto_usuario",  // Nombre de la tabla intermedia
@@ -37,6 +39,7 @@ public class Proyecto {
     )
     private Set<Usuario> usuarios;  // Empleados asociados al proyecto
 
+    @JsonIgnore
     @OneToMany(mappedBy = "proyecto", cascade = CascadeType.ALL)
-    private Set<NoConformidad> noConformidades;  // No conformidades asociadas al proyecto
+    private Set<NoConformidad> noConformidad;  // No conformidades asociadas al proyecto
 }
