@@ -1,6 +1,6 @@
 package com.marioborrego.gestordocumentalbackend.presentation.controller;
 
-import com.marioborrego.gestordocumentalbackend.business.exceptions.InternalServerError;
+import com.marioborrego.gestordocumentalbackend.presentation.exceptions.InternalServerError;
 import com.marioborrego.gestordocumentalbackend.business.services.interfaces.CarpetaService;
 import com.marioborrego.gestordocumentalbackend.presentation.exceptions.SubirDocumentoExceptions;
 import io.swagger.v3.oas.annotations.Operation;

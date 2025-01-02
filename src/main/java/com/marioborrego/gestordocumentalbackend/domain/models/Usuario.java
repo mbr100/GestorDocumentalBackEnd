@@ -1,5 +1,6 @@
 package com.marioborrego.gestordocumentalbackend.domain.models;
 
+import com.marioborrego.gestordocumentalbackend.domain.models.enums.TipoRol;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -43,9 +44,15 @@ public class Usuario implements UserDetails {
     private Set<Proyecto> proyectos;
 
 
+//    @Override
+//    public Collection<? extends GrantedAuthority> getAuthorities() {
+//        return Collections.singletonList(new SimpleGrantedAuthority(rol.getRol()));
+//    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(rol.getRol()));
+        TipoRol rol = this.getRol().getTipoRol();
+        return Collections.singletonList(new SimpleGrantedAuthority(rol.toString()));
     }
 
     @Override

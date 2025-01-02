@@ -155,5 +155,21 @@ public class ProyectoServiceImpl implements ProyectoService {
         return proyectoRepository.existsByCodigo(CodeProyect.codeProyectToId(id));
     }
 
+    @Override
+    public List<ListarProyectoEmpleadoDTO> getAllProyectosAdministrador() {
+        try {
+            return proyectoRepository.findAll().stream().map(proyecto ->
+                    ListarProyectoEmpleadoDTO.builder()
+                            .idProyecto(CodeProyect.idToCodeProyect(proyecto.getCodigo()))
+                            .titulo(proyecto.getTitulo())
+                            .ano(proyecto.getAno())
+                            .cliente(proyecto.getCliente())
+                            .build()).toList();
+        } catch (Exception e) {
+            logger.error("Error al obtener los proyectos", e);
+            return List.of();
+        }
+    }
+
 
 }

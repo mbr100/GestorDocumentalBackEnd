@@ -1,6 +1,7 @@
 package com.marioborrego.gestordocumentalbackend.business.services.implemetation;
 
 import com.marioborrego.gestordocumentalbackend.domain.models.Rol;
+import com.marioborrego.gestordocumentalbackend.presentation.dto.rolDTO.RolesDTO;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.usuariosDTO.ListarUsuariosDTO;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.rolDTO.EditarRolDTO;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.rolDTO.RolDTO;
@@ -104,14 +105,15 @@ public class RolServiceImpl implements RolService {
     }
 
     @Override
-    public  Map<String, String> crearRol(String Rol) {
+    public  Map<String, String> crearRol(RolesDTO rol) {
         Map<String, String> response = new HashMap<>();
-        if (rolRepository.findByRol(Rol) != null) {
+        if (rolRepository.findByRol(rol.getRol()) != null) {
             response.put("status", "error");
             response.put("message", "El rol ya existe");
         }
         Rol nuevoRol = new Rol();
-        nuevoRol.setRol(Rol);
+        nuevoRol.setRol(rol.getRol());
+        nuevoRol.setTipoRol(rol.getTipoRol());
         rolRepository.save(nuevoRol);
         response.put("status", "success");
         response.put("message", "Rol creado correctamente");

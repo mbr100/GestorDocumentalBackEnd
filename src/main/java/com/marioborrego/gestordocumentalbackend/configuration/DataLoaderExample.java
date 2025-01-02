@@ -6,6 +6,7 @@ import com.marioborrego.gestordocumentalbackend.domain.models.*;
 import com.marioborrego.gestordocumentalbackend.domain.models.enums.Estado;
 import com.marioborrego.gestordocumentalbackend.domain.models.enums.Responsable;
 import com.marioborrego.gestordocumentalbackend.domain.models.enums.TipoNc;
+import com.marioborrego.gestordocumentalbackend.domain.models.enums.TipoRol;
 import com.marioborrego.gestordocumentalbackend.domain.repositories.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -21,10 +22,10 @@ public class DataLoaderExample {
                                    PasswordEncoder passwordEncoder, CarpetaService carpetaService, NoConformidadRepository noConformidadRepository) {
         return _ -> {
             // Crear roles
-            Rol gestorProyectos = new Rol("Gestor de proyectos");
-            Rol gestorExpertos = new Rol("Gestor de expertos");
-            Rol comercial = new Rol("Comercial");
-            Rol administrador = new Rol("Administrador");
+            Rol gestorProyectos = new Rol("Gestor de proyectos", TipoRol.EMPLEADO);
+            Rol gestorExpertos = new Rol("Gestor de expertos", TipoRol.EMPLEADO);
+            Rol comercial = new Rol("Comercial", TipoRol.EMPLEADO);
+            Rol administrador = new Rol("Administrador", TipoRol.ADMINISTRADOR);
 
             // Guardar roles en la base de datos
             rolRepository.save(gestorProyectos);
@@ -38,7 +39,7 @@ public class DataLoaderExample {
                     .password(passwordEncoder.encode("1234"))
                     .activo(true)
                     .telefono("123456789")
-                    .rol(gestorProyectos)
+                    .rol(administrador)
                     .build();
             Usuario usuario11 = Usuario.builder()
                     .nombre("Alma beniro")

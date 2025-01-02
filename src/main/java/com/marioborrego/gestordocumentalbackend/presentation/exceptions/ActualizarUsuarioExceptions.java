@@ -1,4 +1,4 @@
-package com.marioborrego.gestordocumentalbackend.business.exceptions;
+package com.marioborrego.gestordocumentalbackend.presentation.exceptions;
 
 public class ActualizarUsuarioExceptions extends RuntimeException{
     public ActualizarUsuarioExceptions(String message) {

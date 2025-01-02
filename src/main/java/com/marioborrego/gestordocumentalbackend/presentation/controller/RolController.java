@@ -61,7 +61,8 @@ public class RolController {
         try {
             List<Rol> roles = rolService.obtenerTodosLosRoles();
             List<RolesDTO> rolesDTOS = roles.stream().map(rol -> new RolesDTO(
-                    rol.getRol()
+                    rol.getRol(),
+                    rol.getTipoRol()
             )).toList();
             if (rolesDTOS.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(rolesDTOS);
@@ -141,7 +142,7 @@ public class RolController {
         Map<String,String> mensaje = new HashMap<>();
         HttpStatus status;
         try {
-            mensaje = rolService.crearRol(rol.getRol());
+            mensaje = rolService.crearRol(rol);
             if (mensaje.get("status").equals("error")) {
                 status = HttpStatus.BAD_REQUEST;
             } else {

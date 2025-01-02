@@ -3,6 +3,7 @@ package com.marioborrego.gestordocumentalbackend.business.services.interfaces;
 import com.marioborrego.gestordocumentalbackend.domain.models.Rol;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.rolDTO.EditarRolDTO;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.rolDTO.RolDTO;
+import com.marioborrego.gestordocumentalbackend.presentation.dto.rolDTO.RolesDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +15,6 @@ public interface RolService {
     List<Rol> obtenerTodosLosRoles();
     Map<String,String> eliminarRol(String Rol);
     Map<String, String> actualizarRol(EditarRolDTO Rol);
-    Map<String, String> crearRol(String Rol);
+    Map<String, String> crearRol(RolesDTO Rol);
     List<Rol> getAllRolesProyectos();
 }

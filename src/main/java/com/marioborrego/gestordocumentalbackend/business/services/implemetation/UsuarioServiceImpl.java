@@ -1,18 +1,21 @@
 package com.marioborrego.gestordocumentalbackend.business.services.implemetation;
 
-import com.marioborrego.gestordocumentalbackend.business.exceptions.*;
-
 import com.marioborrego.gestordocumentalbackend.domain.models.*;
 import com.marioborrego.gestordocumentalbackend.domain.repositories.RolRepository;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.usuariosDTO.*;
 import com.marioborrego.gestordocumentalbackend.domain.repositories.UsuarioRepository;
 import com.marioborrego.gestordocumentalbackend.business.services.interfaces.UsuarioService;
+import com.marioborrego.gestordocumentalbackend.presentation.exceptions.ActualizarUsuarioExceptions;
+import com.marioborrego.gestordocumentalbackend.presentation.exceptions.CrearUsuarioExceptions;
+import com.marioborrego.gestordocumentalbackend.presentation.exceptions.EliminarUsuarioExceptions;
+import com.marioborrego.gestordocumentalbackend.presentation.exceptions.InternalServerError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -125,5 +128,10 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public List<Proyecto> getProyectosUsuario(int idEmpleado) {
         return usuarioRepository.getProyectosEmpleado(idEmpleado);
+    }
+
+    @Override
+    public Optional<Usuario> getUsuarioByNombreONulo(String nombre) {
+        return usuarioRepository.findUsuariosByNombre(nombre);
     }
 }

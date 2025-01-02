@@ -19,6 +19,7 @@ spring:
 security:
     jwt:
         expiration-in-minutes: 60
-#logging:
-#    level:
-#      org.springframework.integration: DEBUG
+        secret: TeTocasPorLasNochesComoUnPutoMacacoCabronTeTocasPorLasNochesComoUnPutoMacacoCabron
+logging:
+    level:
+      org.springframework.integration: DEBUG

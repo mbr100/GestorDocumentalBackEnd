@@ -6,11 +6,9 @@ import com.marioborrego.gestordocumentalbackend.presentation.dto.auth.Authentica
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController()
 @RequestMapping("/auth")
@@ -28,4 +26,11 @@ public class AuthenticationController {
         AuthenticationResponse response = authenticateService.login(requestAuthentication);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/validate-token")
+    public ResponseEntity<Boolean> validate(@RequestParam String jwt){
+        boolean isTokenValid = authenticateService.validateToken(jwt);
+        return ResponseEntity.status(isTokenValid ? HttpStatus.OK :HttpStatus.UNAUTHORIZED).body(isTokenValid);
+    }
+
 }

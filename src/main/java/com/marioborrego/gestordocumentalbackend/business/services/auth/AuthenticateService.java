@@ -5,6 +5,7 @@ import com.marioborrego.gestordocumentalbackend.domain.models.Usuario;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.auth.AuthenticationRequest;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.auth.AuthenticationResponse;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,6 +20,7 @@ public class AuthenticateService {
     private final AuthenticationManager authenticationManager;
     private final UsuarioService usuarioService;
     private final JwtService jwtService;
+    private final Logger logger = org.slf4j.LoggerFactory.getLogger(AuthenticateService.class);
 
     public AuthenticateService(UsuarioService usuarioService, JwtService jwtService, AuthenticationManager authenticationManager) {
         this.usuarioService = usuarioService;
@@ -28,8 +30,10 @@ public class AuthenticateService {
 
     private Map<String, Object> generateExtraClaims(Usuario user) {
         Map<String, Object> extraClaims = new HashMap<>();
-        extraClaims.put("role",user.getRol().getRol());
+        extraClaims.put("nombre", user.getNombre());
         extraClaims.put("email",user.getEmail());
+        extraClaims.put("rol",user.getRol().getRol());
+        extraClaims.put("idUsuario",user.getIdUsuario());
         return extraClaims;
     }
 
@@ -44,12 +48,15 @@ public class AuthenticateService {
         return response;
     }
 
-//    public boolean validate(String jwt) {
-//        try {
-//            jwtService.extractUsername(jwt);
-//            return true;
-//        } catch (Exception e) {
-//            return false;
-//        }
-//    }
+    public boolean validateToken(String jwt) {
+        try{
+            jwtService.extractUsername(jwt);
+            return true;
+        }catch (Exception e){
+            logger.error("Error validating token", e);
+            return false;
+        }
+    }
+
+
 }

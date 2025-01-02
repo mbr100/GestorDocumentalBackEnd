@@ -2,13 +2,16 @@ package com.marioborrego.gestordocumentalbackend.presentation.controller;
 
 import com.marioborrego.gestordocumentalbackend.business.services.interfaces.NoConformidadService;
 import com.marioborrego.gestordocumentalbackend.business.services.interfaces.ProyectoService;
+import com.marioborrego.gestordocumentalbackend.presentation.exceptions.CrearPuntoNoConformidadExceptions;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.ncsDTO.CrearNoConformidadDto;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.ncsDTO.NoConformidadesProyectoDto;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.ncsDTO.NuevoPuntoNcDTO;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.ncsDTO.RespuestaPuntoNoConformidad;
+import com.marioborrego.gestordocumentalbackend.presentation.exceptions.NcNoEncontradaExceptions;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -41,7 +44,7 @@ public class NoConformidadController {
             return ResponseEntity.notFound().build();
         }
         if (noConformidadService.noConformidadesPorProyecto(idProyecto).isEmpty()) {
-            return ResponseEntity.noContent().build();
+            throw new NcNoEncontradaExceptions("No se encontraron no conformidades");
         }
         return ResponseEntity.ok(noConformidadService.noConformidadesPorProyecto(idProyecto).stream().map(NoConformidadesProyectoDto::new).toList());
     }
@@ -52,9 +55,9 @@ public class NoConformidadController {
             @ApiResponse(responseCode = "400", description = "No se pudo responder la no conformidad")
     })
     @PostMapping("/responder")
-    public ResponseEntity<?> responderNoConformidad(@RequestBody RespuestaPuntoNoConformidad respuestaNoConformidadesProyectoDto) {
+    public ResponseEntity<?> responderNoConformidad(@RequestBody @Valid RespuestaPuntoNoConformidad respuestaNoConformidadesProyectoDto) {
         log.info("Respuesta: {}", respuestaNoConformidadesProyectoDto);
-        if (respuestaNoConformidadesProyectoDto.getIdNoConformidad() == null || respuestaNoConformidadesProyectoDto.getContenido() == null) {
+        if (respuestaNoConformidadesProyectoDto.getContenido() == null) {
             return ResponseEntity.badRequest().build();
         }
         boolean puntoRespondido = noConformidadService.responderNoConformidad(respuestaNoConformidadesProyectoDto);
@@ -85,8 +88,14 @@ public class NoConformidadController {
         log.info("Respuesta: {}", nuevoPuntoNcDTO.nuevoPuntoNC);
         log.info("Respuesta: {}", nuevoPuntoNcDTO.idNoConformidad);
         log.info("Respuesta: {}", nuevoPuntoNcDTO.idProyecto);
-        if (nuevoPuntoNcDTO.getNuevoPuntoNC() == null || nuevoPuntoNcDTO.getIdNoConformidad() == null|| nuevoPuntoNcDTO.getIdProyecto() == null) {
-            return ResponseEntity.badRequest().build();
+        if (nuevoPuntoNcDTO.getNuevoPuntoNC() == null ) {
+            throw new CrearPuntoNoConformidadExceptions("El punto no conformidad no puede estar vacío");
+        }
+        if (nuevoPuntoNcDTO.getIdNoConformidad() == null){
+            throw new CrearPuntoNoConformidadExceptions("El id de la no conformidad no puede estar vacío");
+        }
+        if (nuevoPuntoNcDTO.getIdProyecto() == null){
+            throw new CrearPuntoNoConformidadExceptions("El id del proyecto no puede estar vacío");
         }
         boolean puntoCreado = noConformidadService.crearPuntoNoConformidad(nuevoPuntoNcDTO);
         return ResponseEntity.status(puntoCreado ? HttpStatus.OK : HttpStatus.BAD_REQUEST).build();
@@ -99,7 +108,6 @@ public class NoConformidadController {
     })
     @PostMapping("/crearNoConformidad")
     public ResponseEntity<?> crearNoConformidad(@RequestBody CrearNoConformidadDto crearNoConformidadDto) {
-        log.info("Respuesta: {}", crearNoConformidadDto);
         if (crearNoConformidadDto.getIdProyecto() == null || crearNoConformidadDto.getTipo() == null) {
             return ResponseEntity.badRequest().build();
         }
