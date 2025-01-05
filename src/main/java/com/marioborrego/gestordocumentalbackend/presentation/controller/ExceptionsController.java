@@ -80,4 +80,18 @@ public class ExceptionsController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(status, message));
     }
 
+    @ExceptionHandler(NoConformidadExceptions.class)
+    public ResponseEntity<ResponseDTO> noConformidadExceptions(NoConformidadExceptions e) {
+        String status = "error";
+        String message = e.getMessage();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseDTO(status, message));
+    }
+
+    @ExceptionHandler(UsuarioNoExisteExceptions.class)
+    public ResponseEntity<ResponseDTO> usuarioNoExisteExceptions(UsuarioNoExisteExceptions e) {
+        String status = "error";
+        String message = e.getMessage();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(status, message));
+    }
+
 }

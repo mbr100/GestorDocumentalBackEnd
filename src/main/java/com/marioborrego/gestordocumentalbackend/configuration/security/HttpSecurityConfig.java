@@ -4,6 +4,7 @@ import com.marioborrego.gestordocumentalbackend.configuration.security.filter.Jw
 import com.marioborrego.gestordocumentalbackend.domain.models.enums.TipoRol;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -37,16 +38,15 @@ public class HttpSecurityConfig {
                 .sessionManagement(ssmg -> ssmg.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .authorizeHttpRequests(authz -> {
-                    authz.requestMatchers("/auth/authenticate").permitAll();
-                    authz.requestMatchers("/auth/validate-token").authenticated();
-                    authz.requestMatchers("/api/usuarios/**").hasRole(TipoRol.ADMINISTRADOR.toString());
-                    authz.requestMatchers("/api/roles/**").hasRole(TipoRol.ADMINISTRADOR.toString());
-                    authz.requestMatchers("/api/proyectos/listarproyectos").authenticated();
-                    authz.requestMatchers("/api/proyectos/**").hasRole(TipoRol.ADMINISTRADOR.toString());
-                    authz.requestMatchers("/api/**").authenticated();
-                    authz.anyRequest().authenticated();
-                }).build();
+                .authorizeHttpRequests(authz -> authz.requestMatchers("/auth/authenticate").permitAll()
+                        .requestMatchers("/auth/validate-token", "/api/proyectos/listarproyectos", "/api/ncs/responder", "/api/ncs/proyecto/**").authenticated()
+                        .requestMatchers("/api/proyectos/proyecto/").authenticated()
+                        .requestMatchers("/api/ncs/cerrarPuntoNc/**", "/api/ncs/crearPuntoNoConformidad/").hasRole(TipoRol.EMPLEADO.toString())
+                        .requestMatchers(HttpMethod.POST,"/api/ncs/crearNoConformidad/").hasRole(TipoRol.EMPLEADO.name())
+                        .requestMatchers("/api/usuarios/**", "/api/roles/**").hasRole(TipoRol.ADMINISTRADOR.toString())
+                        .requestMatchers(HttpMethod.POST, "/api/proyectos/").hasRole(TipoRol.ADMINISTRADOR.toString())
+                        .requestMatchers(HttpMethod.PUT, "/api/proyectos/actualizarProyecto/").hasRole(TipoRol.ADMINISTRADOR.toString())
+                        .anyRequest().authenticated()).build();
     }
 
     @Bean

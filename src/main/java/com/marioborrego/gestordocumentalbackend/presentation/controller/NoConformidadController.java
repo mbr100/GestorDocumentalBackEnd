@@ -2,12 +2,16 @@ package com.marioborrego.gestordocumentalbackend.presentation.controller;
 
 import com.marioborrego.gestordocumentalbackend.business.services.interfaces.NoConformidadService;
 import com.marioborrego.gestordocumentalbackend.business.services.interfaces.ProyectoService;
+import com.marioborrego.gestordocumentalbackend.domain.models.Usuario;
+import com.marioborrego.gestordocumentalbackend.domain.models.enums.TipoRol;
 import com.marioborrego.gestordocumentalbackend.presentation.exceptions.CrearPuntoNoConformidadExceptions;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.ncsDTO.CrearNoConformidadDto;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.ncsDTO.NoConformidadesProyectoDto;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.ncsDTO.NuevoPuntoNcDTO;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.ncsDTO.RespuestaPuntoNoConformidad;
 import com.marioborrego.gestordocumentalbackend.presentation.exceptions.NcNoEncontradaExceptions;
+import com.marioborrego.gestordocumentalbackend.presentation.exceptions.NoConformidadExceptions;
+import com.marioborrego.gestordocumentalbackend.presentation.exceptions.UsuarioNoExisteExceptions;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -16,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -56,7 +61,6 @@ public class NoConformidadController {
     })
     @PostMapping("/responder")
     public ResponseEntity<?> responderNoConformidad(@RequestBody @Valid RespuestaPuntoNoConformidad respuestaNoConformidadesProyectoDto) {
-        log.info("Respuesta: {}", respuestaNoConformidadesProyectoDto);
         if (respuestaNoConformidadesProyectoDto.getContenido() == null) {
             return ResponseEntity.badRequest().build();
         }
@@ -71,7 +75,13 @@ public class NoConformidadController {
     })
     @GetMapping("/cerrarPuntoNc/{idPuntoNc}")
     public ResponseEntity<?> cerrarPuntoNc(@PathVariable() Long idPuntoNc) {
-        log.info("CerrarPuntoNc: {}", idPuntoNc);
+        Usuario usuario = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (usuario == null) {
+            throw new UsuarioNoExisteExceptions("No Conformidad no encontrada");
+        }
+        if (usuario.getRol().getTipoRol() != TipoRol.EMPLEADO) {
+            throw new NoConformidadExceptions("No tiene permisos para cerrar la no conformidad");
+        }
         if (noConformidadService.cerrarPuntoNc(idPuntoNc)) {
             return ResponseEntity.ok().build();
         }

@@ -2,11 +2,9 @@ package com.marioborrego.gestordocumentalbackend.business.services.implemetation
 
 import com.marioborrego.gestordocumentalbackend.business.services.interfaces.NoConformidadService;
 import com.marioborrego.gestordocumentalbackend.business.utils.CodeProyect;
-import com.marioborrego.gestordocumentalbackend.domain.models.ContenidoPuntoNoConformidad;
-import com.marioborrego.gestordocumentalbackend.domain.models.NoConformidad;
-import com.marioborrego.gestordocumentalbackend.domain.models.Proyecto;
-import com.marioborrego.gestordocumentalbackend.domain.models.PuntosNoConformidad;
+import com.marioborrego.gestordocumentalbackend.domain.models.*;
 import com.marioborrego.gestordocumentalbackend.domain.models.enums.Estado;
+import com.marioborrego.gestordocumentalbackend.domain.models.enums.TipoRol;
 import com.marioborrego.gestordocumentalbackend.domain.repositories.ContenidoPuntoNoConformidadRepository;
 import com.marioborrego.gestordocumentalbackend.domain.repositories.NoConformidadRepository;
 import com.marioborrego.gestordocumentalbackend.domain.repositories.ProyectoRepository;
@@ -16,6 +14,7 @@ import com.marioborrego.gestordocumentalbackend.presentation.dto.ncsDTO.NuevoPun
 import com.marioborrego.gestordocumentalbackend.presentation.dto.ncsDTO.RespuestaPuntoNoConformidad;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -49,17 +48,21 @@ public class NoConformidadServiceImpl implements NoConformidadService {
 
     @Override
     public boolean responderNoConformidad(RespuestaPuntoNoConformidad respuestaNoConformidadesProyectoDto) {
-        PuntosNoConformidad puntosNoConformidad = puntosNoConformidadRepository.findById(respuestaNoConformidadesProyectoDto.getIdNoConformidad()).orElse(null);
-        if (puntosNoConformidad == null) {
+        PuntosNoConformidad puntoNoConformidad = puntosNoConformidadRepository.findById(respuestaNoConformidadesProyectoDto.getIdNoConformidad()).orElse(null);
+        if (puntoNoConformidad == null) {
             return false;
         }
-        if (puntosNoConformidad.getEstado() == Estado.CERRADA){
+        if (puntoNoConformidad.getEstado() == Estado.CERRADA){
+            return false;
+        }
+        List<PuntosNoConformidad> puntosNC = puntoNoConformidad.getNoConformidad().getPuntosNoConformidades();
+        if ((puntosNC.size() % 2 != 0 && !verificarEmpleado()) || (puntosNC.size() % 2 == 0 && verificarEmpleado())) {
             return false;
         }
         ContenidoPuntoNoConformidad contenidoPuntoNoConformidad = ContenidoPuntoNoConformidad.builder()
                 .contenido(respuestaNoConformidadesProyectoDto.getContenido())
                 .fecha(new Date())
-                .puntosNoConformidad(puntosNoConformidad)
+                .puntosNoConformidad(puntoNoConformidad)
                 .build();
         try {
             contenidoPuntoNoConformidadRepository.save(contenidoPuntoNoConformidad);
@@ -74,7 +77,7 @@ public class NoConformidadServiceImpl implements NoConformidadService {
     public boolean cerrarPuntoNc(Long idPuntoNc) {
         try {
             PuntosNoConformidad puntoNC = puntosNoConformidadRepository.findById(idPuntoNc).orElse(null);
-            if (puntoNC == null) {
+            if (puntoNC == null || puntoNC.getEstado() == Estado.CERRADA || !verificarEmpleado()) {
                 return false;
             }
             // Obtener los puntos de la no conformidad asociada
@@ -82,7 +85,10 @@ public class NoConformidadServiceImpl implements NoConformidadService {
 
             // Verificar si el número de puntos es impar (falta una respuesta)
             if (puntoNC.getContenidos().size() % 2 != 0) {
-                return false;  // No se puede cerrar si el número de puntos no es par
+                return false;  // No se puede cerrar si el número de puntos no es par porque falta la respuesta del responsable
+            }
+            if (!verificarEmpleado()){
+                return false;
             }
 
             // Establecer el estado del punto de no conformidad a CERRADA
@@ -108,6 +114,9 @@ public class NoConformidadServiceImpl implements NoConformidadService {
     @Override
     public boolean crearPuntoNoConformidad(NuevoPuntoNcDTO nuevoPuntoNcDTO) {
         try {
+           if (!verificarEmpleado()) {
+               return false;
+           }
             ContenidoPuntoNoConformidad contenidoPuntoNoConformidad = ContenidoPuntoNoConformidad.builder()
                     .contenido(nuevoPuntoNcDTO.getNuevoPuntoNC())
                     .fecha(new Date())
@@ -131,7 +140,7 @@ public class NoConformidadServiceImpl implements NoConformidadService {
     public boolean crearNoConformidad(CrearNoConformidadDto crearNoConformidadDto) {
         try {
             Proyecto proyecto = proyectoRepository.findByCodigo(CodeProyect.codeProyectToId(crearNoConformidadDto.getIdProyecto()));
-            if (proyecto == null) {
+            if (!verificarEmpleado() || proyecto == null) {
                 return false;
             }
             NoConformidad noConformidad = NoConformidad.builder()
@@ -149,5 +158,10 @@ public class NoConformidadServiceImpl implements NoConformidadService {
             log.error("Error al guardar la no conformidad", e);
             return false;
         }
+    }
+
+    private boolean verificarEmpleado() {
+        Usuario usuario = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return usuario != null && usuario.getRol().getTipoRol() != TipoRol.CLIENTE;
     }
 }
