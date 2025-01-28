@@ -29,7 +29,6 @@ public class SpringBeansInjector {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationStrategy = new DaoAuthenticationProvider();

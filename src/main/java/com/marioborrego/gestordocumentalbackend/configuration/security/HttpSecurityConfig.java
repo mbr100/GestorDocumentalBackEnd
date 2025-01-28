@@ -38,16 +38,18 @@ public class HttpSecurityConfig {
                 .sessionManagement(ssmg -> ssmg.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .authorizeHttpRequests(authz -> authz.requestMatchers("/auth/authenticate").permitAll()
+                .authorizeHttpRequests(authz -> authz
+                        .requestMatchers("/auth/authenticate").permitAll()
                         .requestMatchers("/auth/validate-token", "/api/proyectos/listarproyectos", "/api/ncs/responder", "/api/ncs/proyecto/**").authenticated()
-                        .requestMatchers("/api/proyectos/proyecto/").authenticated()
-                        .requestMatchers("/api/ncs/cerrarPuntoNc/**", "/api/ncs/crearPuntoNoConformidad/").hasRole(TipoRol.EMPLEADO.toString())
-                        .requestMatchers(HttpMethod.POST,"/api/ncs/crearNoConformidad/").hasRole(TipoRol.EMPLEADO.name())
-                        .requestMatchers("/api/usuarios/**", "/api/roles/**").hasRole(TipoRol.ADMINISTRADOR.toString())
-                        .requestMatchers(HttpMethod.POST, "/api/proyectos/").hasRole(TipoRol.ADMINISTRADOR.toString())
-                        .requestMatchers(HttpMethod.PUT, "/api/proyectos/actualizarProyecto/").hasRole(TipoRol.ADMINISTRADOR.toString())
-                        .anyRequest().authenticated()).build();
+                        .requestMatchers(HttpMethod.POST, "/api/ncs/crearNoConformidad/").hasAuthority(TipoRol.EMPLEADO.toString())
+                        .requestMatchers("/api/ncs/cerrarPuntoNc/**", "/api/ncs/crearPuntoNoConformidad/").hasAuthority(TipoRol.EMPLEADO.toString())
+                        .requestMatchers("/api/usuarios/**", "/api/roles/**").hasAuthority(TipoRol.ADMINISTRADOR.toString())
+                        .requestMatchers(HttpMethod.POST, "/api/proyectos/").hasAuthority(TipoRol.ADMINISTRADOR.toString())
+                        .requestMatchers(HttpMethod.PUT, "/api/proyectos/actualizarProyecto/").hasAuthority(TipoRol.ADMINISTRADOR.toString())
+                        .anyRequest().authenticated()
+                ).build();
     }
+
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

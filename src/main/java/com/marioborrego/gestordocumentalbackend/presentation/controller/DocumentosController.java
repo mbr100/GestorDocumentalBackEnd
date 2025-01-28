@@ -56,10 +56,10 @@ public class DocumentosController {
         }
     }
 
-    @Operation(summary = "Subir documento a carpeta", description = "Subir documento a carpeta")
+    @Operation(summary = "Aceptar documento en carpeta", description = "Aceptar documento subudo por el cliente")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Documento subido correctamente"),
-            @ApiResponse(responseCode = "400", description = "Error al subir el documento")
+            @ApiResponse(responseCode = "200", description = "Documento aceptado correctamente"),
+            @ApiResponse(responseCode = "400", description = "Error al aceptar el documento")
     })
     @PutMapping("/{idProyecto}/aceptar")
     public ResponseEntity<?> aceptarDocumento(@PathVariable String idProyecto, @RequestParam String ruta, @RequestParam String documento) throws IOException {

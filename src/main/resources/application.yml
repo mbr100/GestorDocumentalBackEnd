@@ -18,7 +18,7 @@ spring:
         open-in-view: true
 security:
     jwt:
-        expiration-in-minutes: 60
+        expiration-in-minutes: 380
         secret: TeTocasPorLasNochesComoUnPutoMacacoCabronTeTocasPorLasNochesComoUnPutoMacacoCabron
 logging:
     level:

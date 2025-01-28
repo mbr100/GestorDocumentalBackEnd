@@ -26,12 +26,14 @@ public class DataLoaderExample {
             Rol gestorExpertos = new Rol("Gestor de expertos", TipoRol.EMPLEADO);
             Rol comercial = new Rol("Comercial", TipoRol.EMPLEADO);
             Rol administrador = new Rol("Administrador", TipoRol.ADMINISTRADOR);
+            Rol clienteRol = new Rol("Cliente", TipoRol.CLIENTE);
 
             // Guardar roles en la base de datos
             rolRepository.save(gestorProyectos);
             rolRepository.save(gestorExpertos);
             rolRepository.save(comercial);
             rolRepository.save(administrador);
+            rolRepository.save(clienteRol);
 
             Usuario usuario1 = Usuario.builder()
                     .nombre("Mario")

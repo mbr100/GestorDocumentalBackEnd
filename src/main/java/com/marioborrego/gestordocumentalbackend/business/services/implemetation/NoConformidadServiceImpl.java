@@ -12,8 +12,10 @@ import com.marioborrego.gestordocumentalbackend.domain.repositories.PuntosNoConf
 import com.marioborrego.gestordocumentalbackend.presentation.dto.ncsDTO.CrearNoConformidadDto;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.ncsDTO.NuevoPuntoNcDTO;
 import com.marioborrego.gestordocumentalbackend.presentation.dto.ncsDTO.RespuestaPuntoNoConformidad;
+import com.marioborrego.gestordocumentalbackend.presentation.exceptions.NoConformidadExceptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -76,40 +78,55 @@ public class NoConformidadServiceImpl implements NoConformidadService {
     @Override
     public boolean cerrarPuntoNc(Long idPuntoNc) {
         try {
+            log.info("Cerrando punto de no conformidad con id: {}", idPuntoNc);
+
+            // Buscar el punto de no conformidad
             PuntosNoConformidad puntoNC = puntosNoConformidadRepository.findById(idPuntoNc).orElse(null);
             if (puntoNC == null || puntoNC.getEstado() == Estado.CERRADA || !verificarEmpleado()) {
+                log.warn("Punto no encontrado, ya está cerrado, o usuario no tiene permisos");
                 return false;
             }
-            // Obtener los puntos de la no conformidad asociada
-            List<PuntosNoConformidad> puntosNC = puntosNoConformidadRepository.findByNoConformidadId(puntoNC.getNoConformidad().getId());
+            if (puntoNC.getContenidos() == null || puntoNC.getContenidos().size() == 1){
+                log.warn("No se puede cerrar el punto de no conformidad porque no tiene Respuesta");
+                return false;
+            }
 
-            // Verificar si el número de puntos es impar (falta una respuesta)
+            // Validar los contenidos del punto de no conformidad
             if (puntoNC.getContenidos().size() % 2 != 0) {
-                return false;  // No se puede cerrar si el número de puntos no es par porque falta la respuesta del responsable
-            }
-            if (!verificarEmpleado()){
-                return false;
+                ContenidoPuntoNoConformidad contenido = ContenidoPuntoNoConformidad.builder()
+                        .contenido("Cerrada")
+                        .fecha(new Date())
+                        .puntosNoConformidad(puntoNC)
+                        .build();
+                contenidoPuntoNoConformidadRepository.save(contenido);
             }
 
-            // Establecer el estado del punto de no conformidad a CERRADA
+            // Cambiar el estado del punto a CERRADA
             puntoNC.setEstado(Estado.CERRADA);
             puntosNoConformidadRepository.save(puntoNC);
 
             // Verificar si todos los puntos de la no conformidad están cerrados
-            boolean todosCerrados = puntosNC.stream().allMatch(punto -> punto.getEstado() == Estado.CERRADA);
+            List<PuntosNoConformidad> puntosNC = puntosNoConformidadRepository.findByNoConformidadId(puntoNC.getNoConformidad().getId());
+            boolean todosCerrados = puntosNC != null && puntosNC.stream().allMatch(punto -> punto.getEstado() == Estado.CERRADA);
 
             if (todosCerrados) {
-                // Si todos los puntos están cerrados, cerrar la no conformidad
+                // Cerrar la no conformidad
                 NoConformidad noConformidad = puntoNC.getNoConformidad();
                 noConformidad.setEstado(Estado.CERRADA);
                 noConformidadRepository.save(noConformidad);
+                log.info("No conformidad cerrada exitosamente");
             }
+
             return true;
+        } catch (DataAccessException e) {
+            log.error("Error en la base de datos al cerrar el punto de no conformidad", e);
+            throw new NoConformidadExceptions("Error al cerrar el punto de no conformidad");
         } catch (Exception e) {
-            log.error("Error al cerrar el punto de no conformidad", e);
-            return false;
+            log.error("Error inesperado al cerrar el punto de no conformidad", e);
+            throw new RuntimeException("Error inesperado", e);
         }
     }
+
 
     @Override
     public boolean crearPuntoNoConformidad(NuevoPuntoNcDTO nuevoPuntoNcDTO) {

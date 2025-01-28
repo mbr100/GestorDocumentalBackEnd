@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -68,25 +69,44 @@ public class NoConformidadController {
         return ResponseEntity.status(puntoRespondido ? HttpStatus.OK : HttpStatus.BAD_REQUEST).build();
     }
 
-    @Operation(summary = "Cerrar punto no conformidad")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Punto no conformidad cerrado correctamente"),
-            @ApiResponse(responseCode = "400", description = "No se pudo cerrar el punto no conformidad")
-    })
-    @GetMapping("/cerrarPuntoNc/{idPuntoNc}")
-    public ResponseEntity<?> cerrarPuntoNc(@PathVariable() Long idPuntoNc) {
+//    @Operation(summary = "Cerrar punto no conformidad")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "Punto no conformidad cerrado correctamente"),
+//            @ApiResponse(responseCode = "400", description = "No se pudo cerrar el punto no conformidad")
+//    })
+//    @GetMapping("/cerrarPuntoNc/{idPuntoNc}")
+//    public ResponseEntity<?> cerrarPuntoNc(@PathVariable() int idPuntoNc) {
+//        Usuario usuario = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        if (usuario == null) {
+//            throw new UsuarioNoExisteExceptions("No Conformidad no encontrada");
+//        }
+//        if (usuario.getRol().getTipoRol() != TipoRol.EMPLEADO) {
+//            throw new NoConformidadExceptions("No tiene permisos para cerrar la no conformidad");
+//        }
+//        if (noConformidadService.cerrarPuntoNc((long) idPuntoNc)) {
+//            return ResponseEntity.ok().build();
+//        }
+//        return ResponseEntity.badRequest().build();
+//    }
+
+    @PutMapping("/cerrarPuntoNc/{idPuntoNc}")
+    public ResponseEntity<?> cerrarPuntoNc(@PathVariable() int idPuntoNc) {
+        log.info("Respuesta: {}", idPuntoNc);
         Usuario usuario = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (usuario == null) {
+            log.error("Usuario no encontrado");
             throw new UsuarioNoExisteExceptions("No Conformidad no encontrada");
         }
         if (usuario.getRol().getTipoRol() != TipoRol.EMPLEADO) {
+            log.error("No tiene permisos para cerrar la no conformidad");
             throw new NoConformidadExceptions("No tiene permisos para cerrar la no conformidad");
         }
-        if (noConformidadService.cerrarPuntoNc(idPuntoNc)) {
+        if (noConformidadService.cerrarPuntoNc((long) idPuntoNc)) {
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.badRequest().build();
     }
+
 
     @Operation(summary = "Crear punto no conformidad")
     @ApiResponses(value = {
