@@ -57,10 +57,16 @@ public class NoConformidadServiceImpl implements NoConformidadService {
         if (puntoNoConformidad.getEstado() == Estado.CERRADA){
             return false;
         }
-        List<PuntosNoConformidad> puntosNC = puntoNoConformidad.getNoConformidad().getPuntosNoConformidades();
-        if ((puntosNC.size() % 2 != 0 && !verificarEmpleado()) || (puntosNC.size() % 2 == 0 && verificarEmpleado())) {
+        log.info("Respondiendo no conformidad con id: {}", respuestaNoConformidadesProyectoDto.getIdNoConformidad());
+        List<ContenidoPuntoNoConformidad> contenidoPuntoNoConformidads = puntoNoConformidad.getContenidos();
+        log.info("Puntos de no conformidad: {}", contenidoPuntoNoConformidads.size());
+        if (contenidoPuntoNoConformidads.size() % 2 != 0 && !verificarEmpleado()) {
             return false;
         }
+        if (contenidoPuntoNoConformidads.size() % 2 == 0 && verificarEmpleado()){
+            return false;
+        }
+
         ContenidoPuntoNoConformidad contenidoPuntoNoConformidad = ContenidoPuntoNoConformidad.builder()
                 .contenido(respuestaNoConformidadesProyectoDto.getContenido())
                 .fecha(new Date())
@@ -92,7 +98,7 @@ public class NoConformidadServiceImpl implements NoConformidadService {
             }
 
             // Validar los contenidos del punto de no conformidad
-            if (puntoNC.getContenidos().size() % 2 != 0) {
+            if (puntoNC.getContenidos().size() % 2 == 0) {
                 ContenidoPuntoNoConformidad contenido = ContenidoPuntoNoConformidad.builder()
                         .contenido("Cerrada")
                         .fecha(new Date())
