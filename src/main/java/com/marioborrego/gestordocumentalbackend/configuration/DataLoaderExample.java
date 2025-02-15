@@ -36,12 +36,12 @@ public class DataLoaderExample {
             rolRepository.save(clienteRol);
 
             Usuario usuario1 = Usuario.builder()
-                    .nombre("Mario")
-                    .email("mario@ejemplo.com")
+                    .nombre("GP")
+                    .email("GP@ejemplo.com")
                     .password(passwordEncoder.encode("1234"))
                     .activo(true)
                     .telefono("123456789")
-                    .rol(clienteRol)
+                    .rol(gestorProyectos)
                     .build();
             Usuario usuario11 = Usuario.builder()
                     .nombre("Alma beniro")

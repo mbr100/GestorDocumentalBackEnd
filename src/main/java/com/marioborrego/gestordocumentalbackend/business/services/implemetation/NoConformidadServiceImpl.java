@@ -61,9 +61,11 @@ public class NoConformidadServiceImpl implements NoConformidadService {
         List<ContenidoPuntoNoConformidad> contenidoPuntoNoConformidads = puntoNoConformidad.getContenidos();
         log.info("Puntos de no conformidad: {}", contenidoPuntoNoConformidads.size());
         if (contenidoPuntoNoConformidads.size() % 2 != 0 && !verificarEmpleado()) {
+            log.warn("No se puede responder la no conformidad porque no es el turno del cliente");
             return false;
         }
         if (contenidoPuntoNoConformidads.size() % 2 == 0 && verificarEmpleado()){
+            log.warn("No se puede responder la no conformidad porque no es el turno del empleado");
             return false;
         }
 
@@ -88,6 +90,7 @@ public class NoConformidadServiceImpl implements NoConformidadService {
 
             // Buscar el punto de no conformidad
             PuntosNoConformidad puntoNC = puntosNoConformidadRepository.findById(idPuntoNc).orElse(null);
+
             if (puntoNC == null || puntoNC.getEstado() == Estado.CERRADA || !verificarEmpleado()) {
                 log.warn("Punto no encontrado, ya está cerrado, o usuario no tiene permisos");
                 return false;

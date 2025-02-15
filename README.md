@@ -8,8 +8,13 @@ Este proyecto es un cliente desarrollado con Angular 19.0.5 que forma parte de u
 - **Resolución de No Conformidades (NC)**:
     - Responder no conformidades generadas por gestores de proyecto, contables, comités, expertos 4D o técnicos.
     - Gestión dinámica de estados de las no conformidades hasta su cierre.
-- **Integración con el Backend**: Comunicación eficiente con el servidor para gestionar archivos y datos.
-- **Interfaz Dinámica**: Actualización en tiempo real de la estructura de carpetas y archivos.
+- **Gestión de Proyectos**:
+    - Crear, editar y eliminar proyectos.
+    - Asignar usuarios a proyectos.
+    - Asignar archivos a proyectos.
+- **Gestión de Usuarios**:
+    - Crear, editar y eliminar usuarios.
+    - Restringir el acceso a ciertas rutas según el rol del usuario.
 
 ## Tecnologías Utilizadas
 - ![Spring](https://img.shields.io/badge/-Spring-6DB33F?style=flat&logo=spring&logoColor=white) Spring Framework
@@ -19,3 +24,25 @@ Este proyecto es un cliente desarrollado con Angular 19.0.5 que forma parte de u
 - ![JPA](https://img.shields.io/badge/-JPA-59666C?style=flat&logo=java&logoColor=white) JPA (Java Persistence API para ORM)
 - ![Lombok](https://img.shields.io/badge/-Lombok-000000?style=flat&logo=lombok&logoColor=white) Lombok (para reducir código boilerplate)
 - ![Swagger](https://img.shields.io/badge/-Swagger-85EA2D?style=flat&logo=swagger&logoColor=white) Swagger (para documentación de APIs)
+
+## Instalación
+1. Clonar el repositorio
+```bash
+  git clone
+```
+
+2. Ejectuar el servidor de desarrollo: Ve a la clase principal `GestorDocumentalBackEndApplication` y ejecútala.
+
+3. Ejectuar el cliente de desarrollo: Ve a la carpeta `GestorDocumentalFrontEnd` y ejecuta el comando `ng serve`.
+
+4. Accede a `http://localhost:4200/` en tu navegador.
+
+5. ¡Listo!
+
+## Autores
+
+El proyecto esta integramente desarrollado por Mario Borrego
+
+## Copyright and license
+
+El código fuente de este proyecto es de código abierto y está disponible bajo la Licencia MIT.
