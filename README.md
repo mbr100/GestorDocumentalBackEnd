@@ -39,6 +39,11 @@ Este proyecto es un cliente desarrollado con Angular 19.0.5 que forma parte de u
 
 5. ¡Listo!
 
+## Datos de Ejemplo
+
+El archivo DataLoaderExample.java contiene una carga de ejemplo de datos en la base de datos.
+
+
 ## Autores
 
 El proyecto esta integramente desarrollado por Mario Borrego
