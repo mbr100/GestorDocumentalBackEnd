@@ -41,7 +41,7 @@ public class DataLoaderExample {
                     .password(passwordEncoder.encode("1234"))
                     .activo(true)
                     .telefono("123456789")
-                    .rol(gestorProyectos)
+                    .rol(administrador)
                     .build();
             Usuario usuario11 = Usuario.builder()
                     .nombre("Alma beniro")

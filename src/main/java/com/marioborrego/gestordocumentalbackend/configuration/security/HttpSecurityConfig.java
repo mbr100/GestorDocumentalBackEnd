@@ -44,7 +44,8 @@ public class HttpSecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/ncs/crearNoConformidad/").hasAuthority(TipoRol.EMPLEADO.toString())
                         .requestMatchers("/api/ncs/cerrarPuntoNc/**", "/api/ncs/crearPuntoNoConformidad/").hasAuthority(TipoRol.EMPLEADO.toString())
                         .requestMatchers("/api/usuarios/**", "/api/roles/**").hasAuthority(TipoRol.ADMINISTRADOR.toString())
-                        .requestMatchers(HttpMethod.POST, "/api/proyectos/").hasAuthority(TipoRol.ADMINISTRADOR.toString())
+                        .requestMatchers("/api/proyectos/listarTodosProyectos").hasAuthority(TipoRol.ADMINISTRADOR.toString())
+                        .requestMatchers("/api/proyectos/**").hasAnyAuthority(TipoRol.ADMINISTRADOR.toString(), TipoRol.EMPLEADO.toString())
                         .requestMatchers(HttpMethod.PUT, "/api/proyectos/actualizarProyecto/").hasAuthority(TipoRol.ADMINISTRADOR.toString())
                         .anyRequest().authenticated()
                 ).build();

@@ -60,6 +60,20 @@ public class ProyectoController {
         return ResponseEntity.status(HttpStatus.OK).body(proyectos);
     }
 
+    @Operation(summary = "Listar todos los proyectos")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Proyectos obtenidos correctamente"),
+            @ApiResponse(responseCode = "204", description = "No se encontraron proyectos")
+    })
+    @GetMapping("/listarTodosProyectos")
+    public ResponseEntity<List<ListarProyectoDTO>> listarTodosProyectos() {
+        List<ListarProyectoDTO> proyectos = proyectoService.getAllProyectos();
+        if (proyectos.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(proyectos);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(proyectos);
+    }
+
     @Operation(summary = "Crear un proyecto")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Proyecto creado correctamente"),
