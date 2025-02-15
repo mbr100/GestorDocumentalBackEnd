@@ -1,7 +1,6 @@
 # Gestor Documental de Proyectos de Deducciones de I+D+i
 
-Este proyecto es un cliente desarrollado con Angular 19.0.5 que forma parte de un sistema de gestión documental para proyectos de deducciones de I+D+i. Permite a los usuarios conectarse a un backend para realizar diversas tareas relacionadas con la gestión de archivos y la resolución de no conformidades.
-
+Este proyecto es un backend desarrollado con Spring Boot que forma parte de un sistema de gestión documental para proyectos de deducciones de I+D+i. Es el Backend del proyecto Gestor Documental FrontEnd
 ## Características
 
 - **Gestión Documental**: Permite compartir y organizar archivos entre usuarios.
