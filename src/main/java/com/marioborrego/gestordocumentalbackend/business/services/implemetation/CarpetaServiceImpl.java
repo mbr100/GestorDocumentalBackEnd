@@ -79,9 +79,6 @@ public class CarpetaServiceImpl implements CarpetaService {
                 File carpetaProyecto = new File(rutaProyecto);
                 return obtenerEstructuraCarpetaEnJson(carpetaProyecto);
             }
-
-
-
         } catch (Exception e) {
             throw new IOException("Error al obtener la estructura de la carpeta del proyecto", e);
         }
