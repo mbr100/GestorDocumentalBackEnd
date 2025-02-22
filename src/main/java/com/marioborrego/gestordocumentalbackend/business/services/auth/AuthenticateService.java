@@ -27,13 +27,13 @@ public class AuthenticateService {
     private final JwtService jwtService;
 
     private final Logger logger = org.slf4j.LoggerFactory.getLogger(AuthenticateService.class);
-    private final JwtTokenRepository jwtTokenRepository;
+    private final JwtTokenRepository jwtRepository;
 
-    public AuthenticateService(UsuarioService usuarioService, JwtService jwtService, AuthenticationManager authenticationManager, JwtTokenRepository jwtTokenRepository) {
+    public AuthenticateService(UsuarioService usuarioService, JwtService jwtService, AuthenticationManager authenticationManager, JwtTokenRepository jwtRepository) {
         this.usuarioService = usuarioService;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
-        this.jwtTokenRepository = jwtTokenRepository;
+        this.jwtRepository = jwtRepository;
     }
 
     private Map<String, Object> generateExtraClaims(Usuario user) {
@@ -62,8 +62,11 @@ public class AuthenticateService {
         token.setToken(jwt);
         token.setUser(user);
         token.setExpiration(jwtService.extractExpiration(jwt));
-        jwtTokenRepository.save(token);
+        token.setValid(true);
+
+        jwtRepository.save(token);
     }
+
 
     public boolean validateToken(String jwt) {
         try{
@@ -77,15 +80,15 @@ public class AuthenticateService {
     }
 
     public void logout(HttpServletRequest request) {
-        String jwt = jwtService.extractJwtFromRequest(request);
 
+        String jwt = jwtService.extractJwtFromRequest(request);
         if(!StringUtils.hasText(jwt)) return;
 
-        Optional<JwtToken> token = jwtTokenRepository.findByToken(jwt);
+        Optional<JwtToken> token = jwtRepository.findByToken(jwt);
 
-        if(token.isPresent() && token.get().isValid()){
+        if(token.isPresent()  && token.get().isValid()){
             token.get().setValid(false);
-            jwtTokenRepository.save(token.get());
+            jwtRepository.save(token.get());
         }
     }
 }

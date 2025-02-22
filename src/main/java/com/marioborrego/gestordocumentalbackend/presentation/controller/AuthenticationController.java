@@ -32,13 +32,11 @@ public class AuthenticationController {
     @GetMapping("/validate-token")
     public ResponseEntity<Boolean> validate(@RequestParam String jwt){
         boolean isTokenValid = authenticateService.validateToken(jwt);
-        log.info("Request to validate token: {}", isTokenValid);
         return ResponseEntity.status(isTokenValid ? HttpStatus.OK :HttpStatus.UNAUTHORIZED).body(isTokenValid);
     }
 
     @PostMapping("/logout")
     public ResponseEntity<LogoutResponse> logout(HttpServletRequest request){
-        log.info("Request to logout user");
         authenticateService.logout(request);
         return ResponseEntity.ok(new LogoutResponse("Logout exitoso"));
     }

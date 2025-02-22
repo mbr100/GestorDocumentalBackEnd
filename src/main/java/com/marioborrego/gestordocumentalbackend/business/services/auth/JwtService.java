@@ -65,7 +65,7 @@ public class JwtService {
     }
 
     public String extractJwtFromRequest(HttpServletRequest request) {
-        String authorizationHeader = request.getHeader("Authorization");
+        String authorizationHeader = request.getHeader("Authorization");//Bearer jwt
         if(!StringUtils.hasText(authorizationHeader) || !authorizationHeader.startsWith("Bearer ")){
             return null;
         }

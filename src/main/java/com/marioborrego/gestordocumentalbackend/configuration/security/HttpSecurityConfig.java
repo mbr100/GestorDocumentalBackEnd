@@ -25,7 +25,6 @@ public class HttpSecurityConfig {
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-
     public HttpSecurityConfig(AuthenticationProvider authenticationProvider, JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.authenticationProvider = authenticationProvider;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
@@ -40,17 +39,14 @@ public class HttpSecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/auth/authenticate").permitAll()
-                        .requestMatchers("/auth/validate-token", "/api/proyectos/listarproyectos", "/api/ncs/responder", "/api/ncs/proyecto/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/ncs/crearNoConformidad/").hasAuthority(TipoRol.EMPLEADO.toString())
-                        .requestMatchers("/api/ncs/cerrarPuntoNc/**", "/api/ncs/crearPuntoNoConformidad/").hasAuthority(TipoRol.EMPLEADO.toString())
+                        .requestMatchers(HttpMethod.POST, "/api/ncs/crearNoConformidad/").hasAnyAuthority(TipoRol.EMPLEADO.toString(), TipoRol.ADMINISTRADOR.toString())
+                        .requestMatchers("/api/ncs/cerrarPuntoNc/**", "/api/ncs/crearPuntoNoConformidad/").hasAnyAuthority(TipoRol.EMPLEADO.toString(), TipoRol.ADMINISTRADOR.toString())
                         .requestMatchers("/api/usuarios/**", "/api/roles/**").hasAuthority(TipoRol.ADMINISTRADOR.toString())
                         .requestMatchers("/api/proyectos/listarTodosProyectos").hasAuthority(TipoRol.ADMINISTRADOR.toString())
-                        .requestMatchers("/api/proyectos/**").hasAnyAuthority(TipoRol.ADMINISTRADOR.toString(), TipoRol.EMPLEADO.toString())
                         .requestMatchers(HttpMethod.PUT, "/api/proyectos/actualizarProyecto/").hasAuthority(TipoRol.ADMINISTRADOR.toString())
                         .anyRequest().authenticated()
                 ).build();
     }
-
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

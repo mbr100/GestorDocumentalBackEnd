@@ -9,6 +9,7 @@ import java.util.Date;
 @Entity
 @Getter @Setter
 public class JwtToken {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
