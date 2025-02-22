@@ -3,9 +3,11 @@ package com.marioborrego.gestordocumentalbackend.business.services.implemetation
 import com.marioborrego.gestordocumentalbackend.business.services.interfaces.CarpetaService;
 import com.marioborrego.gestordocumentalbackend.business.utils.CodeProyect;
 import com.marioborrego.gestordocumentalbackend.domain.models.Carpeta;
+import com.marioborrego.gestordocumentalbackend.domain.models.Usuario;
 import com.marioborrego.gestordocumentalbackend.domain.repositories.CarpetaRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -67,9 +69,19 @@ public class CarpetaServiceImpl implements CarpetaService {
     @Override
     public Map<String, Object> archivosProyectoParaEmpleados(String projectId) throws IOException {
         try {
-            String rutaProyecto = BASE_DIRECTORY + "/" + projectId;
-            File carpetaProyecto = new File(rutaProyecto);
-            return obtenerEstructuraCarpetaEnJson(carpetaProyecto);
+            Usuario u = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (Objects.equals(u.getRol().getTipoRol().toString(), "CLIENTE")) {
+                String rutaProyecto = BASE_DIRECTORY + "/" + projectId+"/Cliente";
+                File carpetaProyecto = new File(rutaProyecto);
+                return obtenerEstructuraCarpetaEnJson(carpetaProyecto);
+            } else {
+                String rutaProyecto = BASE_DIRECTORY + "/" + projectId;
+                File carpetaProyecto = new File(rutaProyecto);
+                return obtenerEstructuraCarpetaEnJson(carpetaProyecto);
+            }
+
+
+
         } catch (Exception e) {
             throw new IOException("Error al obtener la estructura de la carpeta del proyecto", e);
         }
@@ -180,8 +192,6 @@ public class CarpetaServiceImpl implements CarpetaService {
         }
         return false;
     }
-
-
 
     private Map<String, Object> obtenerEstructuraCarpetaEnJson(File carpeta) {
         Map<String, Object> mapaCarpeta = new HashMap<>();
