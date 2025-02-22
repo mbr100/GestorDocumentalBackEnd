@@ -49,15 +49,15 @@ El proyecto esta integramente desarrollado por Mario Borrego
 
 ## Copyright and license
 
-## Licencia
+### Licencia
 
 Este proyecto está licenciado bajo la [Licencia Creative Commons Atribución-NoComercial 4.0 Internacional (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/deed.es).
 
-#### Permisos:
+### Permisos:
 ✅ Compartir — copiar y redistribuir el material en cualquier medio o formato.  
 ✅ Adaptar — remezclar, transformar y construir a partir del material.
 
-#### Bajo las siguientes condiciones:
+### Bajo las siguientes condiciones:
 - **Atribución** — Debe otorgar el crédito adecuado, proporcionar un enlace a la licencia e indicar si se han realizado cambios.
 - **No Comercial** — No puede utilizarse el material con fines comerciales.
 - No puede hacerlo de manera que sugiera que tiene el apoyo del licenciante o que este aprueba su uso.
