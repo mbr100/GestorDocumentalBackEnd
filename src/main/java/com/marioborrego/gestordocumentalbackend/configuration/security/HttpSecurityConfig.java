@@ -39,6 +39,7 @@ public class HttpSecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/auth/authenticate").permitAll()
+                        .requestMatchers("api/documentos/descargar").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/ncs/crearNoConformidad/").hasAnyAuthority(TipoRol.EMPLEADO.toString(), TipoRol.ADMINISTRADOR.toString())
                         .requestMatchers("/api/ncs/cerrarPuntoNc/**", "/api/ncs/crearPuntoNoConformidad/").hasAnyAuthority(TipoRol.EMPLEADO.toString(), TipoRol.ADMINISTRADOR.toString())
                         .requestMatchers("/api/usuarios/**", "/api/roles/**").hasAuthority(TipoRol.ADMINISTRADOR.toString())

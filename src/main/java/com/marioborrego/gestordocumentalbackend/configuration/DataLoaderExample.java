@@ -17,7 +17,7 @@ import java.util.*;
 
 @Configuration
 public class DataLoaderExample {
-    @Bean
+/*    @Bean
     CommandLineRunner initDatabase(RolRepository rolRepository, UsuarioRepository usuarioRepository, ProyectoRepository proyectoRepository, CarpetaRepository carpetaRepository,
                                    PasswordEncoder passwordEncoder, CarpetaService carpetaService, NoConformidadRepository noConformidadRepository) {
         return _ -> {
@@ -36,7 +36,7 @@ public class DataLoaderExample {
             rolRepository.save(clienteRol);
 
             Usuario usuario1 = Usuario.builder()
-                    .nombre("Mario")
+                    .nombre("GP")
                     .email("GP@ejemplo.com")
                     .password(passwordEncoder.encode("1234"))
                     .activo(true)
@@ -147,12 +147,12 @@ public class DataLoaderExample {
                     .build();
 
             Carpeta aceptacion = Carpeta.builder()
-                    .nombre("Aceptación")
+                    .nombre("Aceptaci&oacute;n")
                     .padre(oferta)
                     .build();
 
             Carpeta ampliacionOferta = Carpeta.builder()
-                    .nombre("Ampliación de oferta")
+                    .nombre("Ampliaci&oacute;n de oferta")
                     .padre(oferta)
                     .build();
 
@@ -177,11 +177,11 @@ public class DataLoaderExample {
                     .build();
 
             Carpeta fichasAmpliacion = Carpeta.builder()
-                    .nombre("Fichas de Ampliación")
+                    .nombre("Fichas de Ampliaci&oacute;n")
                     .padre(cliente)
                     .build();
 
-            // Crear subcarpetas de fichas de ampliación
+            // Crear subcarpetas de fichas de ampliaci&oacute;n
             Carpeta ficha21 = Carpeta.builder()
                     .nombre("Fichas 2.1")
                     .padre(fichasAmpliacion)
@@ -299,7 +299,7 @@ public class DataLoaderExample {
                     .fecha(new Date(1693872000000L))
                     .build();
             ContenidoPuntoNoConformidad contenidoNC2_3 = ContenidoPuntoNoConformidad.builder()
-                    .contenido("Los documentos aportados no cumplen los requisitos mínimos")
+                    .contenido("Los documentos aportados no cumplen los requisitos m&iacute;nimos")
                     .fecha(new Date(1693958400000L))
                     .build();
             List<ContenidoPuntoNoConformidad> contenidosNC2 = Arrays.asList(contenidoNC2_1, contenidoNC2_2, contenidoNC2_3);
@@ -317,7 +317,7 @@ public class DataLoaderExample {
 
             // Crear TERCERA NoConformidad para Proyecto 1
             ContenidoPuntoNoConformidad contenidoNC3_1 = ContenidoPuntoNoConformidad.builder()
-                    .contenido("Los documentos están incompletos")
+                    .contenido("Los documentos est&aacute;n incompletos")
                     .fecha(new Date(1694044800000L))
                     .build();
             ContenidoPuntoNoConformidad contenidoNC3_2 = ContenidoPuntoNoConformidad.builder()
@@ -381,5 +381,8 @@ public class DataLoaderExample {
                 noConformidadRepository.save(noConformidadProyecto2);
             }
         };
+
+
     }
+*/
 }
